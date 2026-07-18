@@ -1,0 +1,1515 @@
+<meta charset="utf-8">
+<title>Claude Certified Architect – Foundations · Architect Workbook</title>
+<style>
+  :root{
+    --ink:#1a1a1a; --muted:#5a5a5a; --faint:#8a8a8a;
+    --rule:#e3e3e0; --rule2:#d3d3ce;
+    --accent:#cc785c; --accent-dk:#a8532f;
+    --bg-soft:#f7f4f0; --bg-soft2:#f0ece6;
+    --good:#2f7d4f; --good-bg:#eef6f0;
+    --warn:#9a5b00; --warn-bg:#fbf3e6;
+    --bad:#a3352a; --bad-bg:#faeeec;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  body{
+    font-family:"Georgia","Times New Roman",serif;
+    color:var(--ink); line-height:1.5; font-size:11pt; margin:0;
+  }
+  .sans{font-family:-apple-system,"Helvetica Neue",Arial,sans-serif}
+
+  /* Page geometry for print */
+  @page{ size:Letter; margin:18mm 16mm 16mm 16mm; }
+  .page{ page-break-after:always; }
+  .page:last-child{ page-break-after:auto; }
+  h1,h2,h3,h4{ font-family:-apple-system,"Helvetica Neue",Arial,sans-serif; line-height:1.2; }
+  h2{ break-after:avoid; } h3,h4{ break-after:avoid; }
+  table{ break-inside:avoid; }
+  .card,.cbox,.qcard{ break-inside:avoid; }
+
+  /* ---------- Cover ---------- */
+  .cover{ padding:14mm 4mm 0; }
+  .cover .kicker{ font-family:-apple-system,Arial,sans-serif; letter-spacing:.18em;
+    text-transform:uppercase; font-size:9.5pt; color:var(--accent-dk); font-weight:700; }
+  .cover .rule-top{ height:4px; background:var(--accent); border-radius:2px; margin-bottom:22px; width:100%; }
+  .cover h1{ font-size:34pt; margin:.15em 0 .05em; letter-spacing:-.01em; }
+  .cover .sub{ font-size:15pt; color:var(--muted); font-family:-apple-system,Arial,sans-serif; font-weight:600; margin-bottom:4px;}
+  .cover .meta{ color:var(--faint); font-family:-apple-system,Arial,sans-serif; font-size:10pt; margin-top:2px;}
+  .cover .lede{ font-size:12pt; color:#333; max-width:34em; margin:26px 0 20px; }
+
+  .facts{ display:grid; grid-template-columns:1fr 1fr; gap:10px 26px; margin-top:8px;
+    font-family:-apple-system,Arial,sans-serif; font-size:10pt; border-top:1px solid var(--rule);
+    padding-top:16px; }
+  .facts div{ display:flex; justify-content:space-between; border-bottom:1px dotted var(--rule2); padding:5px 0;}
+  .facts .k{ color:var(--muted); } .facts .v{ font-weight:700; color:var(--ink); text-align:right;}
+
+  .weightbars{ margin-top:20px; font-family:-apple-system,Arial,sans-serif; font-size:9.5pt;}
+  .wb{ display:grid; grid-template-columns:20px 1fr 40px; align-items:center; gap:10px; margin:6px 0;}
+  .wb .n{ color:var(--faint); font-variant-numeric:tabular-nums;}
+  .wb .lbl{ display:flex; align-items:center; gap:8px;}
+  .wb .track{ position:relative; height:14px; background:var(--bg-soft2); border-radius:7px; overflow:hidden; flex:1;}
+  .wb .barrow{ display:grid; grid-template-columns:1fr; }
+  .wb .fill{ position:absolute; inset:0 auto 0 0; background:linear-gradient(90deg,var(--accent),var(--accent-dk)); border-radius:7px;}
+  .wb .name{ min-width:210px;}
+  .wb .pct{ font-weight:700; text-align:right; font-variant-numeric:tabular-nums;}
+
+  /* ---------- Generic sections ---------- */
+  .section-head{ display:flex; align-items:baseline; gap:12px; border-bottom:2px solid var(--ink);
+    padding-bottom:6px; margin:0 0 14px; }
+  .section-head .dnum{ font-family:-apple-system,Arial,sans-serif; font-weight:800; font-size:11pt;
+    color:#fff; background:var(--accent-dk); border-radius:5px; padding:3px 9px; letter-spacing:.02em;}
+  .section-head h2{ font-size:18pt; margin:0; flex:1;}
+  .section-head .w{ font-family:-apple-system,Arial,sans-serif; font-size:10pt; color:var(--accent-dk); font-weight:700;}
+
+  h2.plain{ font-size:18pt; border-bottom:2px solid var(--ink); padding-bottom:6px; margin:0 0 14px;}
+  h3{ font-size:12.5pt; margin:18px 0 6px; color:#111;}
+  h4{ font-size:11pt; margin:12px 0 4px; color:var(--accent-dk); font-family:-apple-system,Arial,sans-serif;}
+
+  p{ margin:7px 0; }
+  ul,ol{ margin:6px 0 6px; padding-left:20px; }
+  li{ margin:3px 0; }
+  b,strong{ color:#111; }
+  .lead{ color:var(--muted); font-style:italic; margin-bottom:12px;}
+
+  code{ font-family:"SF Mono",Menlo,Consolas,monospace; font-size:9.2pt; background:var(--bg-soft);
+    padding:1px 5px; border-radius:4px; color:#7a3b23;}
+
+  /* Tables */
+  table{ width:100%; border-collapse:collapse; margin:10px 0; font-size:9.8pt;
+    font-family:-apple-system,Arial,sans-serif; }
+  th,td{ text-align:left; padding:7px 9px; border-bottom:1px solid var(--rule); vertical-align:top;}
+  thead th{ background:var(--bg-soft); color:#222; border-bottom:1.5px solid var(--rule2); font-size:9pt;
+    text-transform:uppercase; letter-spacing:.04em;}
+  tbody tr:nth-child(even){ background:#faf9f7;}
+
+  /* Callout boxes */
+  .cbox{ border-radius:8px; padding:10px 14px; margin:12px 0; font-size:10pt;
+    font-family:-apple-system,Arial,sans-serif; border:1px solid var(--rule2);}
+  .cbox .t{ font-weight:800; font-size:9pt; text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px;}
+  .cbox.tip{ background:var(--good-bg); border-color:#cfe6d6;} .cbox.tip .t{ color:var(--good);}
+  .cbox.warn{ background:var(--warn-bg); border-color:#eeddbd;} .cbox.warn .t{ color:var(--warn);}
+  .cbox.key{ background:var(--bg-soft); border-color:var(--rule2);} .cbox.key .t{ color:var(--accent-dk);}
+  .cbox.exam{ background:#eef2f8; border-color:#d3ddec;} .cbox.exam .t{ color:#2f5aa0;}
+
+  /* Do/Don't split */
+  .dd{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0;}
+  .dd .col{ border-radius:8px; padding:8px 12px; font-family:-apple-system,Arial,sans-serif; font-size:9.6pt;}
+  .dd .do{ background:var(--good-bg); border:1px solid #cfe6d6;}
+  .dd .dont{ background:var(--bad-bg); border:1px solid #eccfca;}
+  .dd h4{ margin:2px 0 6px; font-family:-apple-system,Arial,sans-serif;}
+  .dd .do h4{ color:var(--good);} .dd .dont h4{ color:var(--bad);}
+  .dd ul{ padding-left:16px; margin:0;}
+
+  .obj{ background:var(--bg-soft); border-left:3px solid var(--accent); padding:8px 12px; margin:0 0 14px;
+    font-family:-apple-system,Arial,sans-serif; font-size:9.6pt; border-radius:0 6px 6px 0;}
+  .obj b{ color:var(--accent-dk); }
+
+  /* Q&A */
+  .qcard{ border:1px solid var(--rule2); border-radius:8px; padding:12px 14px; margin:12px 0;
+    font-family:-apple-system,Arial,sans-serif; font-size:10pt;}
+  .qcard .qd{ font-size:8.5pt; text-transform:uppercase; letter-spacing:.05em; color:var(--accent-dk); font-weight:700;}
+  .qcard .q{ font-weight:600; margin:4px 0 8px;}
+  .qcard .opt{ margin:3px 0; padding-left:4px;}
+  .qcard .ans{ margin-top:8px; background:var(--good-bg); border-radius:6px; padding:7px 10px; font-size:9.5pt;}
+  .qcard .ans b{ color:var(--good);}
+
+  .toc{ font-family:-apple-system,Arial,sans-serif; font-size:10.5pt; }
+  .toc div{ display:flex; justify-content:space-between; border-bottom:1px dotted var(--rule2); padding:6px 2px;}
+  .toc .n{ color:var(--faint); width:26px;}
+  .toc a{ color:var(--ink); text-decoration:none; flex:1;}
+  .toc .pg{ color:var(--faint);}
+
+  .footer-note{ font-family:-apple-system,Arial,sans-serif; font-size:8.5pt; color:var(--faint);
+    text-align:center; border-top:1px solid var(--rule); padding-top:8px; margin-top:16px;}
+  .mini{ font-size:9pt; color:var(--muted); font-family:-apple-system,Arial,sans-serif;}
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0 22px;}
+  .pill{ display:inline-block; background:var(--bg-soft2); border-radius:20px; padding:2px 10px; font-size:8.5pt;
+    font-family:-apple-system,Arial,sans-serif; color:#444; margin:2px 3px 2px 0;}
+
+/* ---- workbook additions ---- */
+.modhead{ display:flex; align-items:baseline; gap:10px; margin:20px 0 8px;
+  border-bottom:1.5px solid var(--rule2); padding-bottom:5px; break-after:avoid;}
+.modhead .mn{ font-family:-apple-system,Arial,sans-serif; font-weight:800; font-size:9pt; color:#fff;
+  background:var(--accent); border-radius:4px; padding:2px 7px; letter-spacing:.02em; white-space:nowrap;}
+.modhead h3{ font-size:13pt; margin:0; flex:1;}
+.modhead .tag{ font-family:-apple-system,Arial,sans-serif; font-size:8.5pt; color:var(--faint); text-transform:uppercase; letter-spacing:.05em;}
+.lab{ background:#f4f7fb; border:1px solid #d3ddec; border-left:3px solid #2f5aa0; border-radius:0 8px 8px 0;
+  padding:9px 13px; margin:11px 0; font-family:-apple-system,Arial,sans-serif; font-size:9.5pt;}
+.lab .t{ font-weight:800; font-size:8.5pt; text-transform:uppercase; letter-spacing:.06em; color:#2f5aa0; margin-bottom:4px;}
+.lab ol,.lab ul{ margin:4px 0; padding-left:18px;}
+.prompt{ background:#fbfaf8; border:1px solid var(--rule2); border-radius:6px; padding:8px 11px; margin:8px 0;
+  font-family:"SF Mono",Menlo,Consolas,monospace; font-size:8.6pt; color:#333; white-space:pre-wrap; line-height:1.45;}
+.prompt .lbl{ font-family:-apple-system,Arial,sans-serif; font-size:8pt; font-weight:700; text-transform:uppercase;
+  letter-spacing:.05em; color:var(--faint); display:block; margin-bottom:4px;}
+.steps{ counter-reset:s; padding-left:0; list-style:none; margin:8px 0;}
+.steps li{ counter-increment:s; position:relative; padding-left:26px; margin:5px 0; font-size:9.8pt;
+  font-family:-apple-system,Arial,sans-serif;}
+.steps li::before{ content:counter(s); position:absolute; left:0; top:1px; width:18px; height:18px;
+  background:var(--bg-soft2); color:var(--accent-dk); border-radius:50%; font-size:8pt; font-weight:800;
+  display:flex; align-items:center; justify-content:center;}
+.grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:10px 0;}
+.card{ border:1px solid var(--rule2); border-radius:8px; padding:9px 12px; font-family:-apple-system,Arial,sans-serif; font-size:9.3pt;}
+.card h4{ margin:0 0 5px;}
+</style>
+<style>
+.code{ background:#1e1e1c; color:#e8e6e1; border-radius:6px; padding:9px 12px; margin:8px 0;
+  font-family:"SF Mono",Menlo,Consolas,monospace; font-size:8.3pt; white-space:pre; overflow-x:auto; line-height:1.45;}
+.code .c{ color:#8f8a80; } .code .k{ color:#e0a672; } .code .s{ color:#a8c8a0; }
+.code .lbl{ font-family:-apple-system,Arial,sans-serif; font-size:7.5pt; font-weight:700; text-transform:uppercase;
+  letter-spacing:.05em; color:#8f8a80; display:block; margin-bottom:5px;}
+table.tight td, table.tight th{ padding:5px 7px; font-size:9.2pt;}
+.mono{ font-family:"SF Mono",Menlo,Consolas,monospace; font-size:8.8pt;}
+</style>
+<style>
+.adr{ border:1px solid var(--rule2); border-left:3px solid var(--accent-dk); border-radius:0 8px 8px 0;
+  padding:9px 13px; margin:11px 0; font-family:-apple-system,Arial,sans-serif; font-size:9.4pt; background:#fbfaf8;}
+.adr .t{ font-weight:800; font-size:8.5pt; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-dk); margin-bottom:5px;}
+.scen{ background:#f4f7fb; border:1px solid #d3ddec; border-radius:8px; padding:9px 13px; margin:11px 0;
+  font-family:-apple-system,Arial,sans-serif; font-size:9.4pt;}
+.scen .t{ font-weight:800; font-size:8.5pt; text-transform:uppercase; letter-spacing:.06em; color:#2f5aa0; margin-bottom:5px;}
+.tri{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px; margin:10px 0; font-family:-apple-system,Arial,sans-serif; font-size:9pt;}
+.tri > div{ border:1px solid var(--rule2); border-radius:7px; padding:8px 10px;}
+.tri h4{ margin:0 0 4px; font-size:9.5pt;}
+</style>
+<!-- ============================ COVER ============================ -->
+<div class="page cover">
+  <div class="rule-top"></div>
+  <div class="kicker">Claude Certification Program · Exam CCAR-F</div>
+  <h1>Architect Workbook</h1>
+  <div class="sub">Claude Certified Architect — Foundations</div>
+  <div class="meta">22 modules across 6 domains · scenario-based, closed-book · design judgment over syntax</div>
+
+  <p class="lede">This credential validates <em>production-grade architectural judgment</em>: designing
+  agentic systems, orchestrating multi-agent pipelines, configuring Claude Code, engineering reliable
+  structured output, and managing context. The exam is scenario-based and closed-book — so this workbook
+  trains the thing being tested: reading a situation, naming the binding constraint, choosing a topology,
+  and defending the trade-off you accepted.</p>
+
+  <div class="facts">
+    <div><span class="k">Domains</span><span class="v">6</span></div>
+    <div><span class="k">Modules</span><span class="v">22</span></div>
+    <div><span class="k">Design drills</span><span class="v">20</span></div>
+    <div><span class="k">Scenario items</span><span class="v">28 with rationale</span></div>
+    <div><span class="k">Format</span><span class="v">Scenario-based</span></div>
+    <div><span class="k">Materials</span><span class="v">Closed-book</span></div>
+    <div><span class="k">Assumes</span><span class="v">CCDV-F-level fluency</span></div>
+    <div><span class="k">Prep time</span><span class="v">3–6 weeks</span></div>
+  </div>
+
+  <div class="weightbars">
+    <div class="mini" style="margin-bottom:8px;font-weight:700;color:#222;">Domain structure — derived from the published scope statement, weights inferred (see facing page)</div>
+    <div class="wb"><span class="n">1</span><span class="lbl"><span class="name">Agentic System Design</span></span><span class="pct">~25%</span></div>
+    <div class="wb"><span class="n"></span><span class="track"><span class="fill" style="width:100%"></span></span><span class="pct"></span></div>
+    <div class="wb"><span class="n">2</span><span class="lbl"><span class="name">Multi-Agent Orchestration</span></span><span class="pct">~20%</span></div>
+    <div class="wb"><span class="n"></span><span class="track"><span class="fill" style="width:80%"></span></span><span class="pct"></span></div>
+    <div class="wb"><span class="n">3</span><span class="lbl"><span class="name">Context Architecture</span></span><span class="pct">~18%</span></div>
+    <div class="wb"><span class="n"></span><span class="track"><span class="fill" style="width:72%"></span></span><span class="pct"></span></div>
+    <div class="wb"><span class="n">4</span><span class="lbl"><span class="name">Structured Output &amp; Contracts</span></span><span class="pct">~15%</span></div>
+    <div class="wb"><span class="n"></span><span class="track"><span class="fill" style="width:60%"></span></span><span class="pct"></span></div>
+    <div class="wb"><span class="n">5</span><span class="lbl"><span class="name">Claude Code Configuration</span></span><span class="pct">~12%</span></div>
+    <div class="wb"><span class="n"></span><span class="track"><span class="fill" style="width:48%"></span></span><span class="pct"></span></div>
+    <div class="wb"><span class="n">6</span><span class="lbl"><span class="name">Reliability, Cost &amp; Governance</span></span><span class="pct">~10%</span></div>
+    <div class="wb"><span class="n"></span><span class="track"><span class="fill" style="width:40%"></span></span><span class="pct"></span></div>
+  </div>
+
+  <div class="footer-note">Unofficial study aid · Not affiliated with or endorsed by Anthropic · Domain weights are inferred, not published — see "How to use this workbook"</div>
+</div>
+
+<!-- ============================ HOW TO USE ============================ -->
+<div class="page">
+  <h2 class="plain">How to use this workbook</h2>
+
+  <div class="cbox warn"><div class="t">Read this first — where the structure came from</div>
+  For the Associate and Developer exams there are published domain outlines. <b>For CCAR-F there is not
+  one available here.</b> The six domains below are derived directly from the credential's own scope
+  statement — designing agentic systems, orchestrating multi-agent pipelines, configuring Claude Code,
+  engineering reliable structured output, and managing context, all under "production-grade architectural
+  judgment." The <b>percentage weights are my estimate of relative emphasis, not published fact</b>, and
+  the module count is a study structure rather than an official syllabus.<br><br>
+  Treat the weights as a study-time hint and nothing more. <b>Verify the real blueprint, format, and
+  logistics with Anthropic before you register.</b> The <em>content</em> here — the patterns, trade-offs,
+  and failure modes — stands on its own regardless of how the exam apportions its questions.</div>
+
+  <div class="cbox key"><div class="t">Closed-book and scenario-based changes how you should study</div>
+  You cannot look anything up, and you will not be asked to recall a parameter name. You'll be given a
+  situation — a team, a workload, a constraint, a failure — and asked which design is right and why.
+  So: <b>stop memorizing syntax and start rehearsing judgment.</b> For every pattern in this workbook you
+  should be able to say, without notes, <em>when it applies, what it costs, what it fails at, and what you
+  would choose instead.</em> The drills are built to produce exactly that.</div>
+
+  <p>Every module has four parts:</p>
+
+  <div class="grid2">
+    <div>
+      <h4>1 · Objectives</h4>
+      <p class="mini">The design decisions you must be able to make and defend.</p>
+      <h4>2 · Architecture</h4>
+      <p class="mini">Patterns with their trade-offs stated explicitly — what each buys, what each costs,
+      and the failure mode that follows from choosing it.</p>
+    </div>
+    <div>
+      <h4>3 · Design drill</h4>
+      <p class="mini">A scenario to work on paper. No code. Output is a decision plus its justification —
+      usually a short architecture decision record.</p>
+      <h4>4 · Scenario items</h4>
+      <p class="mini">Exam-style items with rationale on why each alternative loses.</p>
+    </div>
+  </div>
+
+  <div class="cbox exam"><div class="t">The four questions behind almost every architect item</div>
+  <b>1. What is the binding constraint?</b> (latency · cost · accuracy · reversibility · compliance — usually one dominates)<br>
+  <b>2. What is the simplest structure that satisfies it?</b> (single call → workflow → agent → multi-agent, in that order)<br>
+  <b>3. What happens when a step fails?</b> (a design with no answer here is not a production design)<br>
+  <b>4. Who is accountable for the irreversible action?</b> (if the answer is "the model", the design is wrong)<br>
+  <span class="mini">Run these four on any scenario before reading the options and most distractors eliminate themselves.</span></div>
+
+  <div class="cbox tip"><div class="t">Prerequisite</div>
+  This workbook assumes CCDV-F-level fluency: the Messages API is stateless, tool results return in one
+  user message, caching is a prefix match, batches halve cost for latency-tolerant work. It does not
+  re-teach those. If any is unfamiliar, work the Developer Workbook first — architecture built on a wrong
+  mental model of the API fails in ways no diagram will reveal.</div>
+
+  <h2 class="plain" style="margin-top:22px;">Contents</h2>
+  <div class="toc">
+    <div><span class="n">—</span><a>The architect's decision frame</a><span class="pg">5</span></div>
+    <div><span class="n">D1</span><a>Agentic System Design — 5 modules</a><span class="pg">7</span></div>
+    <div><span class="n">D2</span><a>Multi-Agent Orchestration — 5 modules</a><span class="pg">14</span></div>
+    <div><span class="n">D3</span><a>Context Architecture — 4 modules</a><span class="pg">22</span></div>
+    <div><span class="n">D4</span><a>Structured Output &amp; Contracts — 4 modules</a><span class="pg">27</span></div>
+    <div><span class="n">D5</span><a>Claude Code Configuration — 2 modules</a><span class="pg">32</span></div>
+    <div><span class="n">D6</span><a>Reliability, Cost &amp; Governance — 2 modules</a><span class="pg">36</span></div>
+    <div><span class="n">—</span><a>Study plan, tracker &amp; answer key</a><span class="pg">40</span></div>
+  </div>
+</div>
+
+<!-- ============================ DECISION FRAME ============================ -->
+<div class="page">
+  <h2 class="plain">The architect's decision frame</h2>
+  <p class="lead">One page. If you internalize nothing else, internalize this — nearly every scenario item
+  is one of these five decisions wearing a costume.</p>
+
+  <h3>1 · The autonomy ladder — climb only as far as you must</h3>
+  <table class="tight">
+    <thead><tr><th style="width:20%">Rung</th><th style="width:26%">Who decides the next step</th><th>Choose it when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Single call</b></td><td>Nobody — one shot</td><td>The task is one transformation: classify, extract, summarize, rewrite.</td></tr>
+      <tr><td><b>Workflow</b></td><td><b>Your code</b></td><td>The steps and success criteria are known in advance. Deterministic, debuggable, cheap.</td></tr>
+      <tr><td><b>Single agent</b></td><td><b>The model</b>, within one context</td><td>The path can't be specified up front; the model must adapt based on what it finds.</td></tr>
+      <tr><td><b>Multi-agent</b></td><td>The model, across <b>isolated contexts</b></td><td>Subtasks need genuine context isolation, parallelism, or independent verification.</td></tr>
+    </tbody>
+  </table>
+  <p class="mini">Each rung buys adaptability and costs determinism, latency, spend, and debuggability.
+  <b>Descending the ladder is almost always the right answer to a reliability problem.</b> An exam option
+  offering more autonomy for a well-specified task is a distractor.</p>
+
+  <h3>2 · Reversibility governs autonomy</h3>
+  <div class="tri">
+    <div><h4>Reversible</h4><p class="mini">Draft, analysis, suggestion, sandbox write. <b>Automate freely.</b></p></div>
+    <div><h4>Costly to reverse</h4><p class="mini">Ticket updates, non-prod deploys, bulk edits. <b>Gate or make idempotent.</b></p></div>
+    <div><h4>Irreversible</h4><p class="mini">Sent mail, payments, prod writes, deletions, public posts. <b>Human commits.</b></p></div>
+  </div>
+
+  <h3>3 · The constraint triangle</h3>
+  <p class="mini">Latency, cost, and accuracy trade against each other. You cannot optimize all three —
+  <b>name which one binds</b>, optimize it, and state what you gave up. A design document that claims to
+  improve all three simultaneously is hiding an assumption.</p>
+
+  <h3>4 · Context is a budget, not a container</h3>
+  <p class="mini">Every architecture decision spends context: tool schemas, system prompt, history, tool
+  results, retrieved documents. In a stateless API you refill it on every call. Designs fail in production
+  not because the model is weak but because the budget was never managed (Domain 3).</p>
+
+  <h3>5 · Contracts at every boundary</h3>
+  <p class="mini">Between a model and your code, between agents, between a pipeline stage and the next —
+  define the shape, enforce it mechanically, and decide what happens when it's violated. "It usually
+  returns valid JSON" is not a contract (Domain 4).</p>
+
+  <div class="adr"><div class="t">The deliverable format used throughout this workbook</div>
+  Most drills ask for a short <b>architecture decision record</b>. Keep it to five lines:<br>
+  <b>Context</b> — the situation and the binding constraint ·
+  <b>Decision</b> — what you chose ·
+  <b>Alternatives</b> — what you rejected and why ·
+  <b>Consequences</b> — what this costs and what it makes harder ·
+  <b>Revisit when</b> — the signal that would change the decision.<br>
+  <span class="mini">That last line is what separates an architect from someone with an opinion — and
+  writing these is the single best preparation for a closed-book scenario exam.</span></div>
+
+  <div class="footer-note">Architect Workbook · Decision frame</div>
+</div>
+<!-- ============================ DOMAIN 1 ============================ -->
+<div class="page">
+  <div class="section-head"><span class="dnum">D1</span><h2>Agentic System Design</h2><span class="w">~25% · 5 modules</span></div>
+  <p class="lead">The largest domain. Its recurring question is not "can an agent do this?" but
+  "<em>should</em> this be an agent, and what does it cost me when it's wrong?"</p>
+
+  <!-- 1.1 -->
+  <div class="modhead"><span class="mn">1.1</span><h3>Choosing the Autonomy Level</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Place a workload on the autonomy ladder and defend it; recognise
+  over-engineering and under-engineering from a scenario description.</div>
+
+  <h4>The four-criteria gate — all must hold before you build an agent</h4>
+  <table class="tight">
+    <thead><tr><th style="width:18%">Criterion</th><th style="width:34%">Question</th><th>If the answer is no</th></tr></thead>
+    <tbody>
+      <tr><td><b>Complexity</b></td><td>Is the task multi-step and hard to fully specify in advance?</td><td>Use a workflow. You already know the steps.</td></tr>
+      <tr><td><b>Value</b></td><td>Does the outcome justify higher cost and latency?</td><td>Use a single call or a cheaper tier.</td></tr>
+      <tr><td><b>Viability</b></td><td>Is the model actually capable at this task type?</td><td>Don't build it yet. Prototype and evaluate first.</td></tr>
+      <tr><td><b>Cost of error</b></td><td>Can mistakes be caught and recovered from?</td><td>Add verification and human gates — or don't automate the decision at all.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Reading the scenario — signals and what they mean</h4>
+  <table class="tight">
+    <thead><tr><th style="width:44%">Scenario language</th><th>Points to</th></tr></thead>
+    <tbody>
+      <tr><td>"the same four steps every time", "our documented process"</td><td><b>Workflow.</b> Known sequence.</td></tr>
+      <tr><td>"depends what it finds", "may need to investigate further"</td><td><b>Agent.</b> Path is data-dependent.</td></tr>
+      <tr><td>"must be auditable / reproducible / explained to a regulator"</td><td><b>Workflow</b>, or an agent with a hard-gated commit step. Determinism is the requirement.</td></tr>
+      <tr><td>"thousands per hour", "sub-second"</td><td><b>Single call</b>, small tier. An agent loop cannot meet that latency budget.</td></tr>
+      <tr><td>"we can't enumerate the cases in advance"</td><td><b>Agent</b> — the honest signal for genuine adaptability.</td></tr>
+      <tr><td>"it must never do X"</td><td>Whatever the tier: enforce X in the <b>harness</b>, not the prompt.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox warn"><div class="t">The two failure directions, and which one the exam punishes more</div>
+  <b>Over-engineering</b> — an agent where a workflow suffices. Symptoms: nondeterministic output on a
+  deterministic task, cost 10× the alternative, unexplainable behavior, hard to test.<br>
+  <b>Under-engineering</b> — a rigid workflow for genuinely open-ended work. Symptoms: an ever-growing
+  thicket of special-case branches, and a pipeline that fails on inputs nobody anticipated.<br>
+  Both are wrong, but scenario exams punish over-engineering more often, because it's the more tempting
+  mistake — the more sophisticated design <em>feels</em> like the better answer.</div>
+
+  <div class="scen"><div class="t">Design drill 1.1 — Place five workloads</div>
+  For each, choose a rung and write a one-line justification plus the constraint that decided it:
+  <ol>
+    <li>Classify 40,000 support emails/day into 12 categories.</li>
+    <li>Given a bug report, reproduce it, find the cause, propose a patch.</li>
+    <li>Every night, generate an exec summary from three fixed dashboards.</li>
+    <li>Answer questions about a 900-page policy manual for internal staff.</li>
+    <li>Given a vague feature request, produce a spec, get sign-off, then implement.</li>
+  </ol>
+  <b>Then the real exercise:</b> for each, name the signal that would make you climb one rung, and the
+  signal that would make you descend. If you can't name both, you chose by instinct rather than by constraint.</div>
+
+  <!-- 1.2 -->
+  <div class="modhead"><span class="mn">1.2</span><h3>Task Decomposition &amp; Boundaries</h3><span class="tag">~60 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Cut a large task into steps with verifiable boundaries; decide what
+  the model owns versus what code owns.</div>
+
+  <div class="cbox key"><div class="t">The decomposition rule</div>
+  <b>Give the model the judgment; give your code the determinism.</b> Anything checkable, countable,
+  ordered, or transactional belongs in code. Language understanding, ambiguity resolution, and
+  summarization belong to the model. A step that mixes both is a step you can't test.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:32%">Give to the model</th><th>Keep in code</th></tr></thead>
+    <tbody>
+      <tr><td>Interpreting unstructured input</td><td>Arithmetic, totals, reconciliation</td></tr>
+      <tr><td>Classification and routing decisions</td><td>Executing the route</td></tr>
+      <tr><td>Drafting and summarizing</td><td>Persistence, transactions, idempotency</td></tr>
+      <tr><td>Choosing which tool fits</td><td>Authorization for that tool</td></tr>
+      <tr><td>Resolving ambiguity</td><td>Enforcing invariants and limits</td></tr>
+    </tbody>
+  </table>
+
+  <h4>A well-cut step has four properties</h4>
+  <ol class="steps">
+    <li><b>A single deliverable</b> — you can name what comes out.</li>
+    <li><b>A verifiable done-condition</b> — you can check it without asking the model.</li>
+    <li><b>An owner</b> — model or code, not both.</li>
+    <li><b>A defined failure behavior</b> — retry, escalate, or abort. Steps without this are where
+    pipelines hang in production.</li>
+  </ol>
+
+  <div class="scen"><div class="t">Design drill 1.2 — Cut one apart</div>
+  Take "process an incoming vendor invoice end to end." Produce 8–12 steps, each labelled
+  <span class="pill">model</span> or <span class="pill">code</span>, with its done-condition and failure
+  behavior. Then mark every step that touches money or writes to a system of record — those are your
+  gate candidates for Module 1.4. Most people's first cut has the model doing arithmetic somewhere; find it.</div>
+
+  <div class="footer-note">Architect Workbook · Domain 1 — Agentic System Design</div>
+</div>
+
+<div class="page">
+  <!-- 1.3 -->
+  <div class="modhead"><span class="mn">1.3</span><h3>Tool Surface Architecture</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Design a tool surface that is capable enough to do the job and
+  narrow enough to be governable.</div>
+
+  <p>The tool surface <b>is</b> the agent's capability boundary. It determines what the agent can do, what
+  your harness can intercept, and the blast radius when something goes wrong. This is the highest-leverage
+  architectural decision in Domain 1.</p>
+
+  <table class="tight">
+    <thead><tr><th style="width:22%">Design</th><th style="width:30%">What it buys</th><th>What it costs</th></tr></thead>
+    <tbody>
+      <tr><td><b>One broad tool</b> (bash / exec)</td><td>Maximum reach; the agent can do almost anything.</td><td>The harness sees an opaque string. You cannot gate, render, audit, or parallelize per-action. Everything is one permission.</td></tr>
+      <tr><td><b>Dedicated typed tools</b></td><td>Typed arguments the harness can inspect, gate, log, and parallelize. Per-action permissions.</td><td>More surface to design and maintain; risk of an over-large tool set diluting selection.</td></tr>
+      <tr><td><b>Hybrid</b> (recommended)</td><td>Bash for breadth, promoted tools for anything gated, rendered, audited, or parallel-safe.</td><td>Requires an explicit promotion rule so the surface doesn't sprawl.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox key"><div class="t">The promotion rule</div>
+  Promote an action from bash to a dedicated tool when it needs to be <b>gated</b> (hard to reverse),
+  <b>rendered</b> (needs UI), <b>audited</b> (compliance), or <b>parallelized</b> (read-only and safe to
+  run concurrently). A <code>send_email</code> tool can be gated; <code>bash -c "curl -X POST …"</code>
+  cannot — the harness has no idea what that string does.</div>
+
+  <div class="cbox warn"><div class="t">Two surface-design failure modes</div>
+  <b>Too broad:</b> one tool, one permission, unbounded blast radius — and no way to require approval for
+  the dangerous 5% without blocking the safe 95%.<br>
+  <b>Too many:</b> 40 overlapping tools dilute selection and bloat every request's context (tool schemas
+  render first and are part of the cache prefix — Domain 3). If the surface must be large, use tool search
+  so schemas load on demand rather than all at once.</div>
+
+  <!-- 1.4 -->
+  <div class="modhead"><span class="mn">1.4</span><h3>Human-in-the-Loop &amp; Reversibility</h3><span class="tag">~60 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Place checkpoints where they matter; design gates that actually
+  function as controls.</div>
+
+  <div class="cbox key"><div class="t">The placement rule</div>
+  <b>Automate generation. Gate commitment.</b> The checkpoint belongs immediately before the action becomes
+  irreversible, externally visible, or costly — not at the start (where there's nothing to review) and not
+  at the end (where it already happened).</div>
+
+  <h4>What makes a gate a control rather than a formality</h4>
+  <table class="tight">
+    <thead><tr><th style="width:26%">Requirement</th><th>Why it fails without it</th></tr></thead>
+    <tbody>
+      <tr><td><b>Competent reviewer</b></td><td>Someone who can't evaluate the output can only rubber-stamp it.</td></tr>
+      <tr><td><b>Sufficient information</b></td><td>Approving a diff you can't see is theater. Show what changes.</td></tr>
+      <tr><td><b>Realistic time budget</b></td><td>Thirty approvals in two minutes is not review — approval rate near 100% at high volume is the tell.</td></tr>
+      <tr><td><b>Genuine authority to reject</b></td><td>A gate that can't stop the pipeline isn't a gate.</td></tr>
+      <tr><td><b>Enforced by the harness</b></td><td>A prompt instruction to "ask before deleting" is guidance the model weighs, not a control it cannot bypass.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox warn"><div class="t">Model confidence is not a gating signal</div>
+  "Auto-approve when the model is confident" fails precisely in the cases the gate exists for — a confident
+  hallucination scores high. If you need a risk-based gate, derive it from <b>properties of the action</b>
+  (amount, recipient domain, blast radius, whether it's reversible), never from the model's self-report.
+  This is one of the most reliably-tested judgments in the whole credential.</div>
+
+  <div class="cbox tip"><div class="t">Reduce gate fatigue without removing the gate</div>
+  If reviewers face too many approvals, don't loosen the gate — <b>reduce what needs gating</b>. Batch
+  related approvals into one decision, make more actions reversible (write to a staging area, use drafts
+  rather than sends), or narrow the tool so the risky path is rare. A gate everyone clicks through has
+  the cost of a control and the value of none.</div>
+
+  <!-- 1.5 -->
+  <div class="modhead"><span class="mn">1.5</span><h3>Failure Modes of Agentic Systems</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Name the characteristic failure modes and their structural
+  mitigations — the diagnosis half of Domain 1.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:22%">Failure mode</th><th style="width:34%">What it looks like</th><th>Structural mitigation</th></tr></thead>
+    <tbody>
+      <tr><td><b>Runaway loop</b></td><td>Agent calls tools indefinitely; cost climbs with no progress.</td><td>Hard iteration cap · budget ceiling · progress check that aborts when state stops changing.</td></tr>
+      <tr><td><b>Goal drift</b></td><td>Ends up solving an adjacent problem; plausible but not what was asked.</td><td>Restate the goal in-loop · verify against the original spec · a separate evaluator.</td></tr>
+      <tr><td><b>Cascading error</b></td><td>An early wrong fact is treated as ground truth by every later step.</td><td>Validate at step boundaries · make steps independently checkable · don't let step N invent inputs for N+1.</td></tr>
+      <tr><td><b>Context exhaustion</b></td><td>Long run degrades, contradicts itself, or truncates.</td><td>Domain 3 in full — budgeting, compaction, editing, memory.</td></tr>
+      <tr><td><b>Silent tool failure</b></td><td>A tool errors; the agent proceeds on an empty result.</td><td>Return explicit errors (never empty-on-failure) · check server-tool result blocks · fail loudly.</td></tr>
+      <tr><td><b>Injection-driven action</b></td><td>Content the agent reads redirects what it does.</td><td>Least privilege · gate commitments · credentials outside model-readable context.</td></tr>
+      <tr><td><b>Confident fabrication</b></td><td>Invented API, citation, or record, delivered fluently.</td><td>Ground in retrieval · require sources · verify before acting, not after.</td></tr>
+      <tr><td><b>Nondeterminism in an audited path</b></td><td>Two runs, two different justifications for the same decision.</td><td>Move the decision into code; let the model produce evidence, not the verdict.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox key"><div class="t">The architect's reflex</div>
+  For every failure mode, the durable fix is <b>structural</b> — a cap, a gate, a contract, a narrowed
+  permission, a verification step. Prompt wording helps and should be used, but a system whose only defense
+  is a well-worded instruction has no defense at all. When a scenario offers "improve the prompt" against
+  "add a structural control," the structural control wins on any consequential path.</div>
+
+  <div class="scen"><div class="t">Design drill 1.5 — Pre-mortem</div>
+  Take a design from drill 1.1 and assume it failed badly in production six months from now. Write the
+  incident summary: what failed, what it cost, what the first signal was, and which structural control
+  would have caught it. Do this for three of the modes above.
+  <b>Then add the control to the design.</b> This drill is the closest thing in the workbook to what the
+  exam actually asks you to do.</div>
+
+  <div class="footer-note">Architect Workbook · Domain 1 — Agentic System Design</div>
+</div>
+
+<div class="page">
+  <h3>Domain 1 — scenario items</h3>
+
+  <div class="qcard"><div class="qd">Item A1-1 · Module 1.1</div>
+  <div class="q">A compliance team processes regulatory filings through a documented, unchanging six-step
+  procedure. Every decision must be reproducible and explainable to an auditor. They ask you to design an
+  autonomous agent. What do you recommend?</div>
+  <div class="opt">A. An agent with tools for each step, so it can adapt to unusual filings</div>
+  <div class="opt">B. A deterministic workflow with Claude calls at the steps needing language understanding, and decisions in code</div>
+  <div class="opt">C. A multi-agent pipeline with a specialist per step</div>
+  <div class="opt">D. A single agent with a detailed system prompt describing the six steps</div>
+  <div class="ans"><b>B.</b> The procedure is known and the binding constraint is <em>reproducibility</em> —
+  which model-driven control flow directly undermines. A, C, and D all introduce nondeterminism into a
+  path that must be explainable to an auditor; D is the subtlest wrong answer because describing the steps
+  in a prompt looks like specifying them, but the model still chooses at runtime. Note the request itself
+  was for an agent — architects are expected to push back when the ask conflicts with the constraint.</div></div>
+
+  <div class="qcard"><div class="qd">Item A1-2 · Module 1.4</div>
+  <div class="q">An agent files expense reports. Reports under $50 post automatically; larger ones queue for
+  approval. Reviewers approve ~200/day and approval rate is 99.4%. What's the architectural concern?</div>
+  <div class="opt">A. The $50 threshold is too low</div>
+  <div class="opt">B. The gate has become a formality — at that volume and approval rate, no real evaluation is occurring</div>
+  <div class="opt">C. The agent should assess its own confidence to reduce reviewer load</div>
+  <div class="opt">D. No concern — a human approves every large report</div>
+  <div class="ans"><b>B.</b> A 99.4% approval rate at 200/day is the classic signature of rubber-stamping:
+  the control exists on the diagram but performs no evaluation. The fix is to <em>reduce what needs
+  gating</em> — risk-based routing on action properties, batching, better summaries for review — not to
+  loosen it. C substitutes the model's self-report for judgment, which fails exactly on the cases that
+  matter. D mistakes the presence of a review step for the presence of review.</div></div>
+
+  <div class="qcard"><div class="qd">Item A1-3 · Module 1.5</div>
+  <div class="q">A research agent occasionally runs for hours, making hundreds of tool calls without
+  converging, producing large bills. Most robust mitigation?</div>
+  <div class="opt">A. Add "be efficient and don't overthink" to the system prompt</div>
+  <div class="opt">B. Switch to a faster model</div>
+  <div class="opt">C. Enforce a hard iteration cap and a token budget ceiling, with a progress check that aborts when state stops changing</div>
+  <div class="opt">D. Increase <code>max_tokens</code> so it finishes sooner</div>
+  <div class="opt">E. Run it as a batch job</div>
+  <div class="ans"><b>C.</b> Runaway loops need enforced bounds, not persuasion. A is guidance the model
+  weighs against everything else in context; B and D change speed and per-response length while leaving
+  the unbounded loop intact; E relocates the same runaway to a different execution mode. The progress check
+  matters as much as the cap — an agent making steady progress toward a hard problem is fine, one spinning
+  on the same state is not.</div></div>
+
+  <div class="qcard"><div class="qd">Item A1-4 · Module 1.3</div>
+  <div class="q">An agent needs broad filesystem and shell access for a migration task, but writes to the
+  production config directory must always require approval. Best design?</div>
+  <div class="opt">A. A single bash tool, with a prompt instruction to ask before touching production config</div>
+  <div class="opt">B. A single bash tool, with a post-hoc audit log reviewed weekly</div>
+  <div class="opt">C. Bash for general work, plus a dedicated write tool for the protected path that the harness gates — and deny the protected path in bash</div>
+  <div class="opt">D. Remove bash and enumerate every possible file operation as a separate tool</div>
+  <div class="ans"><b>C.</b> This is the promotion rule applied precisely: keep breadth where breadth is
+  needed, promote the one action requiring a gate so the harness can intercept it, and close the bypass.
+  A relies on prompt compliance for a hard guarantee. B detects damage a week late. D throws away the
+  breadth the task actually requires, and an incomplete enumeration just fails differently.</div></div>
+
+  <div class="footer-note">Architect Workbook · Domain 1 — Agentic System Design</div>
+</div>
+<!-- ============================ DOMAIN 2 ============================ -->
+<div class="page">
+  <div class="section-head"><span class="dnum">D2</span><h2>Multi-Agent Orchestration</h2><span class="w">~20% · 5 modules</span></div>
+  <p class="lead">The domain where sophistication is most tempting and most often wrong. Multi-agent is a
+  real tool with real costs — the architect's job is knowing which.</p>
+
+  <!-- 2.1 -->
+  <div class="modhead"><span class="mn">2.1</span><h3>When Multi-Agent Actually Wins</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Justify a multi-agent design on grounds other than elegance; recognise
+  when one agent with good tools is better.</div>
+
+  <div class="cbox key"><div class="t">The three legitimate reasons — and there are only three</div>
+  <b>1. Context isolation.</b> A subtask would flood the main context with detail nobody needs afterwards
+  (read 40 files, return one answer). The subagent burns its own context; the parent gets the conclusion.<br>
+  <b>2. Parallelism.</b> Genuinely independent subtasks that would otherwise run serially — wall-clock is
+  the constraint.<br>
+  <b>3. Independent verification.</b> A reviewer with a <em>fresh</em> context catches what the author
+  cannot, because it doesn't share the author's assumptions.<br>
+  <span class="mini">"Specialization" is usually <b>not</b> a fourth reason — a single agent with clear
+  instructions and the right tools typically handles multiple roles fine. If your only argument is that
+  each agent has a different persona, you probably want one agent.</span></div>
+
+  <table class="tight">
+    <thead><tr><th style="width:30%">What you gain</th><th>What you pay</th></tr></thead>
+    <tbody>
+      <tr><td>Context isolation per subtask</td><td>Handoffs lose fidelity — the parent sees a summary, not the evidence</td></tr>
+      <tr><td>Wall-clock parallelism</td><td>Token cost multiplies; each agent re-establishes its own context</td></tr>
+      <tr><td>Independent verification</td><td>Coordination complexity, partial-failure states, harder debugging</td></tr>
+      <tr><td>Specialized tool surfaces</td><td>More moving parts to secure, gate, and observe</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox warn"><div class="t">The under-examined cost: debuggability</div>
+  When a single agent misbehaves you read one transcript. When a five-agent pipeline produces a wrong
+  answer you must work out <em>which</em> agent was wrong, whether it was wrong because of a bad handoff,
+  and whether the parent misinterpreted a correct result. Multi-agent systems are meaningfully harder to
+  debug, and that cost is paid every day of operation — not just at design time.</div>
+
+  <!-- 2.2 -->
+  <div class="modhead"><span class="mn">2.2</span><h3>Topologies</h3><span class="tag">~90 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Name each topology, its shape, and its characteristic failure —
+  then select one from a scenario.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:18%">Topology</th><th style="width:26%">Shape</th><th style="width:26%">Use when</th><th>Characteristic failure</th></tr></thead>
+    <tbody>
+      <tr><td><b>Pipeline</b><br><span class="mini">(chaining)</span></td><td>A → B → C, fixed order.</td><td>Stages are known and sequential; each transforms the last.</td><td>Error cascade — a wrong step 1 corrupts everything downstream, confidently.</td></tr>
+      <tr><td><b>Router</b></td><td>Classify, then dispatch to a specialist.</td><td>Distinct input classes need different handling or different cost tiers.</td><td>Misclassification sends work down a path that cannot recover it.</td></tr>
+      <tr><td><b>Parallel fan-out</b></td><td>Split → N workers concurrently → merge.</td><td>Independent subtasks; wall-clock matters.</td><td>Merge conflicts; partial failure leaves an ambiguous aggregate.</td></tr>
+      <tr><td><b>Orchestrator-workers</b></td><td>A lead decomposes dynamically and delegates.</td><td>Subtasks aren't known until runtime.</td><td>Orchestrator over-delegates trivia; coordination cost exceeds the work.</td></tr>
+      <tr><td><b>Evaluator-optimizer</b></td><td>Generate → critique → revise, looping.</td><td>Quality bar is expressible as criteria and first drafts reliably miss it.</td><td>Infinite polish loop; a lenient evaluator that passes anything.</td></tr>
+      <tr><td><b>Voting / consensus</b></td><td>Same task N times, agree on the answer.</td><td>High-stakes classification where errors are expensive and independent.</td><td>N× cost; correlated errors mean agreement isn't independence.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox tip"><div class="t">Evaluator-optimizer: use a separate context</div>
+  Asking one agent to critique its own output produces mostly agreement — it shares every assumption that
+  produced the flaw. A <b>separate evaluator with a fresh context and an explicit rubric</b> is materially
+  more effective. Always bound the loop (max revisions) and define what happens when it exhausts them:
+  ship the best attempt, escalate to a human, or fail. That last decision is the one people forget.</div>
+
+  <div class="scen"><div class="t">Design drill 2.2 — Match topology to scenario</div>
+  Choose a topology and name its characteristic failure plus your mitigation:
+  <ol>
+    <li>Translate a product catalogue into 12 languages, each independent.</li>
+    <li>Draft a legal summary that must meet a firm's written quality standard.</li>
+    <li>Triage inbound security alerts: most are noise, some need deep investigation.</li>
+    <li>Given a research question, find sources, extract claims, check consistency, synthesize.</li>
+    <li>Decide whether a transaction is fraudulent; false negatives are very expensive.</li>
+  </ol>
+  <b>Then:</b> for two of them, argue the case that a <em>single</em> agent would be the better choice.
+  If that argument is easy to make, the multi-agent design was decoration.</div>
+
+  <div class="footer-note">Architect Workbook · Domain 2 — Multi-Agent Orchestration</div>
+</div>
+
+<div class="page">
+  <!-- 2.3 -->
+  <div class="modhead"><span class="mn">2.3</span><h3>Handoff Contracts &amp; Context Isolation</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Design what passes between agents; decide what each agent may and
+  may not see.</div>
+
+  <div class="cbox key"><div class="t">The handoff is the architecture</div>
+  In a multi-agent system, <b>the interfaces matter more than the agents</b>. An agent whose input is a
+  vague paragraph will fail unpredictably no matter how good it is. Specify each handoff like an API:
+  what's in it, what shape it takes, what's guaranteed, and what happens when it's malformed.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:22%">Handoff element</th><th>Design question</th></tr></thead>
+    <tbody>
+      <tr><td><b>Payload shape</b></td><td>Structured (schema-enforced) or prose? Between agents, prefer structured — see Domain 4.</td></tr>
+      <tr><td><b>Provenance</b></td><td>Does the receiver need to know where facts came from, or just the conclusion? Losing provenance is how unverifiable claims propagate.</td></tr>
+      <tr><td><b>Confidence / gaps</b></td><td>Can the sender say "I couldn't determine X"? Without an explicit slot for uncertainty, agents fill gaps with plausible invention.</td></tr>
+      <tr><td><b>Scope</b></td><td>What must the receiver <em>not</em> see — for context economy, and for privilege separation?</td></tr>
+      <tr><td><b>Failure signal</b></td><td>How does the sender report that it failed, distinguishably from returning a poor result?</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox warn"><div class="t">The lossy-handoff failure</div>
+  Subagent reads 40 files and reports "the auth module looks fine." The parent takes that as verified fact
+  and proceeds. But the summary dropped the caveat, the parent can't see the evidence, and no one can
+  reconstruct the reasoning. <b>Design handoffs to carry the caveats, not just the conclusion</b> — an
+  explicit field for "what I could not determine" is one of the highest-value fields in any multi-agent
+  contract, and it costs almost nothing.</div>
+
+  <div class="cbox tip"><div class="t">Isolation is a privilege boundary too</div>
+  Different agents can have different tool surfaces and different credentials. A summarizer that reads
+  untrusted external content should <b>not</b> hold the tool that sends email — then a successful prompt
+  injection in the content it reads has nowhere to go. Splitting read-untrusted from act-externally is one
+  of the strongest architectural mitigations available, and it's a Domain 1/6 idea that lands hardest here.</div>
+
+  <!-- 2.4 -->
+  <div class="modhead"><span class="mn">2.4</span><h3>Coordination, State &amp; Partial Failure</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Decide where shared state lives; design for partial failure rather
+  than assuming success.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:26%">State approach</th><th style="width:28%">Good for</th><th>Watch out for</th></tr></thead>
+    <tbody>
+      <tr><td><b>Pass-through</b> (state in messages)</td><td>Short pipelines; simple payloads.</td><td>Grows with every hop; each agent re-reads everything.</td></tr>
+      <tr><td><b>Shared workspace</b> (files)</td><td>Agents collaborating on artifacts.</td><td>Concurrent writes; no transactionality; needs conventions.</td></tr>
+      <tr><td><b>External store</b> (DB/queue)</td><td>Durable, resumable, auditable pipelines.</td><td>Most engineering; the right answer for anything long-running.</td></tr>
+      <tr><td><b>Orchestrator-held</b></td><td>Fan-out/fan-in where the lead owns the merge.</td><td>Orchestrator context becomes the bottleneck.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Partial failure — the questions an exam scenario is really asking</h4>
+  <ol class="steps">
+    <li><b>One of five parallel workers fails — what does the merge produce?</b> A partial result labelled as partial, a retry, or an abort. Silently merging four of five is the bug.</li>
+    <li><b>A pipeline stage fails at step 4 of 6 — can you resume?</b> Only if intermediate state was durable. Otherwise you re-run everything, at full cost.</li>
+    <li><b>Are retries safe?</b> If a stage has side effects, a retry duplicates them unless it's idempotent.</li>
+    <li><b>Is there a global budget?</b> Per-agent caps still multiply. Cap the <em>system</em>, not just each participant.</li>
+  </ol>
+
+  <!-- 2.5 -->
+  <div class="modhead"><span class="mn">2.5</span><h3>The Economics of Multi-Agent</h3><span class="tag">~60 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Estimate the cost and latency profile of a topology before building it.</div>
+
+  <div class="cbox warn"><div class="t">Multi-agent multiplies token spend, and not linearly</div>
+  Each agent carries its own system prompt, its own tool schemas, and its own accumulated context. Five
+  agents is not 5× one agent's <em>useful</em> work — a good deal of it is re-establishing context that the
+  parent already had. Orchestrator-worker designs also pay for the orchestrator's own reasoning about
+  delegation. Budget accordingly, and be suspicious of a design whose justification is elegance.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:24%">Topology</th><th style="width:22%">Cost profile</th><th>Latency profile</th></tr></thead>
+    <tbody>
+      <tr><td>Single agent</td><td>Baseline</td><td>Serial; bounded by the task.</td></tr>
+      <tr><td>Pipeline</td><td>Sum of stages; each re-establishes context</td><td>Serial — the sum of every stage. Worst case for wall-clock.</td></tr>
+      <tr><td>Parallel fan-out</td><td>N× worker cost + merge</td><td><b>Best case</b> — roughly the slowest worker.</td></tr>
+      <tr><td>Orchestrator-workers</td><td>N× + orchestrator overhead</td><td>Partly parallel; the orchestrator serializes decisions.</td></tr>
+      <tr><td>Evaluator-optimizer</td><td>(generate + evaluate) × iterations</td><td>Serial and unbounded unless capped.</td></tr>
+      <tr><td>Voting</td><td><b>N× per decision</b></td><td>Parallel; justified only by error cost.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox tip"><div class="t">Cost levers still apply — and matter more here</div>
+  Right-size each agent independently (a summarizer subagent rarely needs the largest tier), keep each
+  agent's prefix stable so caching works, and route latency-tolerant stages to batch processing. A
+  multi-agent design where every participant runs the biggest model is the most common way these systems
+  become indefensibly expensive.</div>
+
+  <div class="scen"><div class="t">Design drill 2.5 — Cost a topology before you build it</div>
+  Take drill 2.2's item 4 (research → extract → check → synthesize). Estimate for both a single agent and
+  a four-agent pipeline: total tokens, wall-clock, per-participant model tier, and what happens if stage 3
+  fails. Then write the ADR — and make the "Revisit when" line concrete: what measured signal would make
+  you collapse the pipeline back into one agent?</div>
+
+  <div class="footer-note">Architect Workbook · Domain 2 — Multi-Agent Orchestration</div>
+</div>
+
+<div class="page">
+  <h3>Domain 2 — scenario items</h3>
+
+  <div class="qcard"><div class="qd">Item A2-1 · Module 2.1</div>
+  <div class="q">A team proposes five agents — researcher, writer, editor, fact-checker, formatter — for a
+  content pipeline. Each has the same tools and reads the same context. What's your assessment?</div>
+  <div class="opt">A. Sound — specialization improves each stage</div>
+  <div class="opt">B. Likely over-engineered: identical tools and shared context mean none of the three real justifications (isolation, parallelism, independent verification) applies to most stages</div>
+  <div class="opt">C. Add a sixth coordinating agent</div>
+  <div class="opt">D. Sound, but they should all use the largest model</div>
+  <div class="ans"><b>B.</b> Same tools plus same context means no isolation and no parallelism — the
+  "specialization" is just five system prompts, which one agent could switch between at a fraction of the
+  cost. The one stage with a genuine claim is <b>fact-checking</b>, which benefits from a fresh context
+  that doesn't share the writer's assumptions. C compounds the problem; D compounds the bill.</div></div>
+
+  <div class="qcard"><div class="qd">Item A2-2 · Module 2.3</div>
+  <div class="q">In an orchestrator-worker system, a worker analyzes 60 log files and reports "no anomalies
+  found." The orchestrator reports the system healthy. It wasn't. What's the design flaw?</div>
+  <div class="opt">A. The worker should have used a more capable model</div>
+  <div class="opt">B. The handoff carries a conclusion with no provenance, coverage, or uncertainty — the orchestrator cannot distinguish "checked thoroughly, found nothing" from "couldn't parse the files"</div>
+  <div class="opt">C. The orchestrator should re-read all 60 files itself</div>
+  <div class="opt">D. Workers shouldn't analyze logs</div>
+  <div class="ans"><b>B.</b> The contract is the flaw. A handoff carrying what was examined, what was
+  skipped, and what couldn't be determined turns an unverifiable claim into a checkable one — and costs
+  almost nothing to add. C defeats the entire purpose of context isolation. A might improve accuracy
+  marginally while leaving the orchestrator equally unable to tell a thorough pass from a failed one.</div></div>
+
+  <div class="qcard"><div class="qd">Item A2-3 · Module 2.2</div>
+  <div class="q">Generated marketing copy must meet a documented brand standard. First drafts meet it about
+  40% of the time. Reviewers are the bottleneck. Best topology?</div>
+  <div class="opt">A. Voting — generate three drafts and pick the most common</div>
+  <div class="opt">B. Evaluator-optimizer: a separate evaluator scores against the standard as an explicit rubric and returns specific revisions, bounded by a max-iteration cap</div>
+  <div class="opt">C. A longer system prompt describing the brand standard</div>
+  <div class="opt">D. A pipeline of three writers each improving the last</div>
+  <div class="ans"><b>B.</b> There's an articulable quality bar and drafts reliably miss it — the exact
+  evaluator-optimizer profile, and it directly relieves the human bottleneck. The separate context matters:
+  a self-critiquing writer mostly agrees with itself. A votes on <em>popularity</em>, not conformance to a
+  standard. C is worth doing anyway but doesn't add the missing feedback loop. D has no evaluation step —
+  three writers guessing in sequence.</div></div>
+
+  <div class="qcard"><div class="qd">Item A2-4 · Module 2.3</div>
+  <div class="q">A summarization agent reads untrusted user-submitted documents. The same agent can send
+  email. Strongest architectural mitigation?</div>
+  <div class="opt">A. Instruct the agent to ignore instructions found inside documents</div>
+  <div class="opt">B. Split into two agents: one reads untrusted content with no outbound tools, one sends email and never reads untrusted content — connected by a structured handoff</div>
+  <div class="opt">C. Scan documents for injection patterns before processing</div>
+  <div class="opt">D. Log all outbound email for later review</div>
+  <div class="ans"><b>B.</b> Privilege separation: an injection in the read agent has no outbound capability
+  to hijack, so it cannot be turned into an action. A is a useful layer but is text competing with text.
+  C is an unbounded blocklist against an attacker who can rephrase. D detects exfiltration after it
+  happened. Only B makes the attack structurally unable to reach its objective.</div></div>
+
+  <div class="qcard"><div class="qd">Item A2-5 · Module 2.4</div>
+  <div class="q">A fan-out design dispatches 8 parallel workers; results are merged into one report. In
+  testing, one worker occasionally times out. Current code merges whatever returned. What should change?</div>
+  <div class="opt">A. Nothing — 7 of 8 is close enough</div>
+  <div class="opt">B. The merge must distinguish complete from partial results, and either retry the failed worker or label the output as partial with the gap named</div>
+  <div class="opt">C. Increase the timeout until failures stop</div>
+  <div class="opt">D. Run the workers serially instead</div>
+  <div class="ans"><b>B.</b> Silently merging 7 of 8 produces a report that <em>looks</em> complete and
+  isn't — the reader has no way to know something is missing, which is worse than a visible failure.
+  A accepts that. C reduces frequency without handling the case, and there's always a timeout you can
+  exceed. D discards the parallelism that motivated the design and still doesn't answer what happens on failure.</div></div>
+
+  <div class="footer-note">Architect Workbook · Domain 2 — Multi-Agent Orchestration</div>
+</div>
+<!-- ============================ DOMAIN 3 ============================ -->
+<div class="page">
+  <div class="section-head"><span class="dnum">D3</span><h2>Context Architecture</h2><span class="w">~18% · 4 modules</span></div>
+  <p class="lead">Named explicitly in the credential's scope. Context is the resource that long-running
+  agentic systems actually run out of — and managing it is a design decision, not a runtime patch.</p>
+
+  <!-- 3.1 -->
+  <div class="modhead"><span class="mn">3.1</span><h3>The Context Budget</h3><span class="tag">~60 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Account for everything competing for the window; design a budget
+  before the system exists.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:26%">Consumer</th><th style="width:20%">Grows with</th><th>Architectural lever</th></tr></thead>
+    <tbody>
+      <tr><td><b>Tool schemas</b></td><td>Tool count</td><td>Narrow the surface; tool search for large libraries. Renders first — part of the cache prefix.</td></tr>
+      <tr><td><b>System prompt</b></td><td>Instruction sprawl</td><td>Keep durable rules only; move task specifics to the turn. Keep it byte-stable.</td></tr>
+      <tr><td><b>Conversation history</b></td><td>Turns</td><td>Compaction, summarization, retrieval.</td></tr>
+      <tr><td><b>Tool results</b></td><td>Agent iterations</td><td><b>Usually the dominant term in an agent loop.</b> Context editing; return summaries not dumps.</td></tr>
+      <tr><td><b>Retrieved documents</b></td><td>Retrieval breadth</td><td>Tighter retrieval; rank and cut; cite rather than inline.</td></tr>
+      <tr><td><b>Thinking</b></td><td>Effort level</td><td>Effort tuning. Counts toward the output cap.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox key"><div class="t">The architect's framing</div>
+  A large context window is not permission to stop thinking about context. Every token you spend on
+  history is one unavailable for the current problem — and in a stateless API you <b>re-send and re-pay
+  for the whole thing on every call</b>. Context growth is therefore simultaneously a quality problem, a
+  latency problem, and a cost problem. It is the same design decision seen from three angles.</div>
+
+  <div class="cbox warn"><div class="t">The signature symptom, and why teams misdiagnose it</div>
+  A long-running agent that starts strong and degrades — contradicting earlier decisions, repeating work,
+  losing the thread — is almost always a context problem, not a capability problem. Teams reliably respond
+  by upgrading the model, which is expensive and doesn't help. <b>Diagnose context before capability</b>
+  whenever quality degrades <em>over the course of a run</em> rather than being poor from the start.</div>
+
+  <!-- 3.2 -->
+  <div class="modhead"><span class="mn">3.2</span><h3>The Four Levers</h3><span class="tag">~90 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Distinguish the four mechanisms precisely and choose among them —
+  this distinction is heavily testable because the options sound interchangeable and are not.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:16%">Lever</th><th style="width:22%">Mechanism</th><th style="width:16%">Scope</th><th>Choose when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Context editing</b></td><td><b>Clears</b> stale tool results / thinking. Prunes; does not summarize.</td><td>Within a session</td><td>Bulk is old tool output that has served its purpose. The default lever for agent loops.</td></tr>
+      <tr><td><b>Compaction</b></td><td><b>Summarizes</b> earlier context into a compaction block.</td><td>Within a session</td><td>The conversation itself is long and the gist must survive.</td></tr>
+      <tr><td><b>Memory</b></td><td>Reads/writes durable files.</td><td><b>Across sessions</b></td><td>State must outlive the process. The <em>only</em> lever that does.</td></tr>
+      <tr><td><b>Retrieval</b></td><td>Keeps corpus outside; injects relevant slices per turn.</td><td>External</td><td>The knowledge base is larger than any window, or changes independently.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox tip"><div class="t">They compose — and long-running systems usually need three</div>
+  A mature agent typically uses <b>context editing</b> to prune tool noise within a run, <b>compaction</b>
+  when the dialogue itself grows long, and <b>memory</b> to carry conclusions into tomorrow's session,
+  with <b>retrieval</b> supplying facts on demand throughout. These are not competing options; the exam
+  question is which one solves the <em>specific</em> symptom described.</div>
+
+  <div class="cbox warn"><div class="t">Two distinctions worth memorizing verbatim</div>
+  <b>Editing vs. compaction:</b> editing <em>deletes</em>, compaction <em>summarizes</em>. If the content
+  must still be recoverable in substance, editing is the wrong lever.<br>
+  <b>Memory vs. everything else:</b> memory is the only cross-session mechanism. "The agent should
+  remember this next week" has exactly one answer — and it is never a bigger context window.</div>
+
+  <div class="scen"><div class="t">Design drill 3.2 — Diagnose the symptom, prescribe the lever</div>
+  For each, name the lever (or combination) and justify it:
+  <ol>
+    <li>An agent reads 200 files in one run; by file 150 it has forgotten the task.</li>
+    <li>A support agent should recall a customer's preferences from a call three weeks ago.</li>
+    <li>A conversation spanning hours must retain decisions but not every exchange verbatim.</li>
+    <li>An assistant must answer from a 50,000-document policy corpus updated weekly.</li>
+    <li>A coding agent re-reads the same large file every few iterations.</li>
+  </ol>
+  <b>Then:</b> for each, state what the wrong lever would cost you. That's the discrimination the items test.</div>
+
+  <div class="footer-note">Architect Workbook · Domain 3 — Context Architecture</div>
+</div>
+
+<div class="page">
+  <!-- 3.3 -->
+  <div class="modhead"><span class="mn">3.3</span><h3>Caching as an Architectural Constraint</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Treat prefix stability as a design property; recognise architectural
+  choices that silently destroy it.</div>
+
+  <div class="cbox key"><div class="t">The architect's version of the caching rule</div>
+  Caching is a <b>prefix match</b>, and render order is <code>tools</code> → <code>system</code> →
+  <code>messages</code>. Therefore: <b>prefix stability is an architectural property you design for, not
+  an optimization you add later.</b> Once you see it that way, several attractive design choices reveal
+  themselves as expensive.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:38%">Design choice</th><th>Effect on caching</th></tr></thead>
+    <tbody>
+      <tr><td>Per-user or per-tenant system prompt</td><td><b>Destroys cross-user sharing.</b> Each tenant has a distinct prefix. Consider a shared prefix plus per-user content <em>after</em> the breakpoint.</td></tr>
+      <tr><td>Dynamic tool set per request</td><td><b>Worst case</b> — tools render first, so changing them invalidates everything.</td></tr>
+      <tr><td>Timestamp or request id in the system prompt</td><td>Invalidates on every single request. The most common accidental cause.</td></tr>
+      <tr><td>Switching models mid-conversation</td><td>Caches are model-scoped — the new model starts cold.</td></tr>
+      <tr><td>Editing the system prompt mid-session</td><td>Invalidates the whole cached history. Prefer appending an operator instruction after the cached prefix.</td></tr>
+      <tr><td>Subagent with its own prompt/tools</td><td>Separate prefix, separate cache. Budget for the cold start of every subagent.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox tip"><div class="t">The design pattern that follows</div>
+  <b>Stable content first, volatile content last.</b> Freeze the system prompt and the tool list; put
+  per-request and per-user material in the message turns after the last breakpoint. In multi-agent designs,
+  give each agent a stable prompt rather than composing one dynamically. This one ordering decision is
+  often worth more than any other cost optimization in a high-volume system.</div>
+
+  <!-- 3.4 -->
+  <div class="modhead"><span class="mn">3.4</span><h3>Long-Horizon Sessions &amp; Handoff</h3><span class="tag">~60 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Design systems that run for hours or resume across days.</div>
+
+  <ol class="steps">
+    <li><b>Externalize durable state early.</b> If a run must survive a restart, its state cannot live only in the conversation. Files, a database, or a memory store — decided at design time, not after the first crash.</li>
+    <li><b>Checkpoint at meaningful boundaries.</b> Enough state to resume without redoing expensive work.</li>
+    <li><b>Design the handoff summary deliberately.</b> Decisions made, constraints established, open questions, current state. This is what survives compaction — so write it as a first-class artifact rather than hoping the summary captures it.</li>
+    <li><b>Re-anchor the goal periodically.</b> Long runs drift; restating the objective is cheap insurance.</li>
+    <li><b>Bound the whole thing.</b> Wall-clock, token, and iteration ceilings at the <em>system</em> level.</li>
+  </ol>
+
+  <div class="cbox warn"><div class="t">Do not confuse "resumable" with "long-running"</div>
+  A resumable system can be killed and restarted without losing work — that requires durable external
+  state. A long-running system merely runs a long time, and loses everything if the process dies. Scenarios
+  describing overnight or multi-day work are usually asking for <b>resumability</b>, and an answer that only
+  extends the session misses the requirement entirely.</div>
+
+  <h3 style="margin-top:20px;">Domain 3 — scenario items</h3>
+
+  <div class="qcard"><div class="qd">Item A3-1 · Module 3.2</div>
+  <div class="q">A code-review agent examines large repositories. Runs start well but by iteration 40 it
+  contradicts earlier findings and revisits files it already reviewed. Best architectural response?</div>
+  <div class="opt">A. Upgrade to a more capable model</div>
+  <div class="opt">B. Apply context editing to clear stale tool results, and maintain a compact running findings list as durable state</div>
+  <div class="opt">C. Increase <code>max_tokens</code></div>
+  <div class="opt">D. Split the repository and run separate independent agents</div>
+  <div class="ans"><b>B.</b> Degradation <em>over the course of a run</em> is the signature of context
+  exhaustion — the file contents dominate the window and the task drifts out of focus. Editing removes the
+  bulk; a running findings list preserves the conclusions that matter. A is the expensive reflex that
+  doesn't address the cause. C affects output length, not input pressure. D is a plausible complement but
+  doesn't fix a single agent's context management, and adds coordination cost.</div></div>
+
+  <div class="qcard"><div class="qd">Item A3-2 · Module 3.2</div>
+  <div class="q">A customer-service agent should recall a customer's stated preferences from a conversation
+  several weeks earlier. What does the architecture need?</div>
+  <div class="opt">A. A larger context window</div>
+  <div class="opt">B. Compaction enabled on the session</div>
+  <div class="opt">C. Cross-session persistence — a memory store or database, written at the end of each conversation and loaded at the start of the next</div>
+  <div class="opt">D. Longer session timeouts</div>
+  <div class="ans"><b>C.</b> Nothing within a session survives it — memory (or an equivalent external store)
+  is the only cross-session mechanism. A and D both try to make one session cover weeks, which doesn't
+  match how conversations actually arrive. B compresses <em>within</em> a session and vanishes with it.
+  Note that the answer also implies a design decision about <em>what</em> to persist and for how long,
+  which is where privacy review belongs.</div></div>
+
+  <div class="qcard"><div class="qd">Item A3-3 · Module 3.3</div>
+  <div class="q">A multi-tenant assistant composes each request's system prompt from a shared base plus
+  tenant-specific rules. At scale, input costs are far higher than projected. Most likely cause?</div>
+  <div class="opt">A. The model tier is too expensive</div>
+  <div class="opt">B. Per-tenant prompt composition gives every tenant a distinct prefix, so cache reuse is limited to that tenant's own repeat traffic</div>
+  <div class="opt">C. Streaming is disabled</div>
+  <div class="opt">D. Requests aren't batched</div>
+  <div class="ans"><b>B.</b> Caching is a byte-exact prefix match, so composing the prompt per tenant
+  fragments the cache — a shared base that <em>looks</em> shared provides no shared caching once tenant
+  rules are concatenated into it. The architectural fix is to keep the shared portion byte-identical and
+  ahead of the breakpoint, with tenant rules after it. A and D are real levers but don't explain the
+  overrun; C doesn't affect cost at all.</div></div>
+
+  <div class="qcard"><div class="qd">Item A3-4 · Module 3.4</div>
+  <div class="q">A migration agent must run for several days, surviving restarts and deploys. Which property
+  is essential?</div>
+  <div class="opt">A. A very large context window</div>
+  <div class="opt">B. Durable external state with checkpointing, so a restart resumes rather than restarts</div>
+  <div class="opt">C. Compaction enabled</div>
+  <div class="opt">D. A higher effort setting</div>
+  <div class="ans"><b>B.</b> Surviving a restart is the stated requirement, and no amount of in-session
+  context management provides it — when the process dies, the conversation dies with it. A and C both
+  extend how long one session can go without addressing durability; D affects reasoning depth. This is the
+  long-running vs. resumable distinction, and it's the whole item.</div></div>
+
+  <div class="footer-note">Architect Workbook · Domain 3 — Context Architecture</div>
+</div>
+
+<!-- ============================ DOMAIN 4 ============================ -->
+<div class="page">
+  <div class="section-head"><span class="dnum">D4</span><h2>Structured Output &amp; Contracts</h2><span class="w">~15% · 4 modules</span></div>
+  <p class="lead">"Engineering reliable structured output" is named in the credential's scope. At architect
+  level this is about <em>contracts at boundaries</em>, not just getting valid JSON back once.</p>
+
+  <!-- 4.1 -->
+  <div class="modhead"><span class="mn">4.1</span><h3>Designing the Output Contract</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Design schemas that make failure visible; decide what the model may
+  and may not omit.</div>
+
+  <div class="cbox key"><div class="t">Design the schema around uncertainty, not just the happy path</div>
+  The most consequential schema decision is <b>giving the model a legitimate way to say "I don't know."</b>
+  A schema with a required <code>price</code> field and no null option guarantees an invented price when
+  the source doesn't state one — the model must produce <em>something</em> valid. Add
+  <code>"unknown"</code> enum values, nullable fields, and an explicit <code>gaps</code> or
+  <code>not_found</code> array. This single habit prevents more downstream damage than any other schema
+  practice.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:30%">Design choice</th><th>Consequence</th></tr></thead>
+    <tbody>
+      <tr><td>Required field with no null path</td><td><b>Forces fabrication</b> when the data is absent.</td></tr>
+      <tr><td>Free-text field where an enum would do</td><td>Downstream string matching; inconsistent values across runs.</td></tr>
+      <tr><td>Deeply nested structure</td><td>Harder to fill correctly and harder to validate partially.</td></tr>
+      <tr><td>Confidence or evidence field</td><td>Lets consumers route low-confidence records to review rather than treating all output equally.</td></tr>
+      <tr><td>Flat, wide records</td><td>Easier to validate, diff, and store. Usually preferred.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox tip"><div class="t">Ask what the consumer does with each field</div>
+  If nothing downstream branches on a field, it may not belong in the contract — every field is something
+  the model must get right and something you must validate. Contracts should be as small as the consumer
+  genuinely needs, and no smaller.</div>
+
+  <div class="footer-note">Architect Workbook · Domain 4 — Structured Output &amp; Contracts</div>
+</div>
+<div class="page">
+  <!-- 4.2 -->
+  <div class="modhead"><span class="mn">4.2</span><h3>Enforcement Mechanisms</h3><span class="tag">~60 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Choose the enforcement level a boundary warrants; know what each
+  mechanism does and does not guarantee.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:24%">Mechanism</th><th style="width:30%">Guarantee</th><th>Right boundary for it</th></tr></thead>
+    <tbody>
+      <tr><td><b>Schema-enforced output</b></td><td>The response conforms to your schema.</td><td>Machine-consumed output — the strongest and usual choice.</td></tr>
+      <tr><td><b>Strict tool arguments</b></td><td>Tool inputs validate exactly.</td><td>Anything the model triggers that has side effects.</td></tr>
+      <tr><td><b>Prompted format</b></td><td><b>None.</b> Works until it doesn't.</td><td>Prototypes and human-read output only.</td></tr>
+      <tr><td><b>Post-hoc validation</b></td><td>Catches violations after generation.</td><td>Always — as the second layer, never as the only one.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox warn"><div class="t">Schema conformance is not correctness — the architect-level distinction</div>
+  A schema guarantees <b>shape</b>, never <b>truth</b>. A perfectly valid record can contain a fabricated
+  price, a mis-parsed date, or a confidently wrong classification. Schema enforcement eliminates parse
+  failures; it does nothing about semantic error. Systems that treat schema-valid output as verified output
+  have simply moved the failure from a visible crash to a silent bad record — which is worse.
+  <b>Validate semantics separately</b>: range checks, referential integrity, cross-field consistency,
+  and sampling against ground truth.</div>
+
+  <!-- 4.3 -->
+  <div class="modhead"><span class="mn">4.3</span><h3>Validation &amp; Graceful Degradation</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Design the failure path; decide what a violation does.</div>
+
+  <p>Every contract needs an answer to: <b>what happens when it's violated?</b> A design without one fails
+  by whatever the code happens to do — usually an exception in the wrong layer, or a silent bad write.</p>
+
+  <table class="tight">
+    <thead><tr><th style="width:22%">Strategy</th><th style="width:28%">Behavior</th><th>Appropriate when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Reject</b></td><td>Fail the record; surface the error.</td><td>Correctness matters more than coverage. The safe default.</td></tr>
+      <tr><td><b>Retry</b></td><td>Re-request, ideally with the validation error fed back.</td><td>Transient formatting failures. Bound the attempts.</td></tr>
+      <tr><td><b>Partial accept</b></td><td>Keep valid fields; flag the rest.</td><td>Records are independently useful field by field.</td></tr>
+      <tr><td><b>Escalate</b></td><td>Route to human review.</td><td>Consequential records where neither dropping nor guessing is acceptable.</td></tr>
+      <tr><td><b>Fallback tier</b></td><td>Retry on a more capable model.</td><td>Systematic failures on hard inputs — measure before adopting.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox key"><div class="t">Never silently drop</div>
+  The one universally wrong strategy is discarding invalid records without a trace. It produces a pipeline
+  that looks healthy while its coverage quietly erodes — and the metric that would reveal it (records in
+  vs. records out) is exactly the one nobody watches. <b>Every rejected record must be counted, and the
+  rejection rate must be visible on a dashboard.</b> A rising rejection rate is one of the earliest and
+  most reliable signals that something upstream has changed.</div>
+
+  <div class="scen"><div class="t">Design drill 4.3 — Specify a contract end to end</div>
+  Design the extraction contract for supplier invoices feeding an accounting system. Specify: the schema
+  (with explicit unknown paths), the enforcement mechanism, the semantic validations, the failure strategy
+  per validation class, and the two metrics you'd alarm on. Then answer the exam's favourite question:
+  <b>what does the system do when a field is genuinely absent from the source document?</b> If your schema
+  forces a value there, redesign it.</div>
+
+  <!-- 4.4 -->
+  <div class="modhead"><span class="mn">4.4</span><h3>Contract Evolution</h3><span class="tag">~45 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Change a contract without breaking consumers or invalidating history.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:26%">Change</th><th style="width:18%">Risk</th><th>Approach</th></tr></thead>
+    <tbody>
+      <tr><td>Add an optional field</td><td>Low</td><td>Safe. Consumers ignore what they don't know.</td></tr>
+      <tr><td>Add a required field</td><td><b>Breaking</b></td><td>Add as optional, backfill, then tighten.</td></tr>
+      <tr><td>Extend an enum</td><td>Medium</td><td>Consumers need a default branch <em>before</em> you ship the new value.</td></tr>
+      <tr><td>Remove or rename a field</td><td><b>Breaking</b></td><td>Deprecate, dual-write, migrate, then remove.</td></tr>
+      <tr><td>Tighten a constraint</td><td>Medium</td><td>Measure the would-be rejection rate against live traffic first.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox tip"><div class="t">The prompt is part of the contract's surface</div>
+  Changing the schema usually means changing the instructions and examples that produce it — and any
+  change to a stable prefix invalidates the cache (Module 3.3). Version schema, prompt, and evaluation set
+  <b>together</b>; re-run the eval before shipping. Treating the prompt as configuration you can tweak
+  independently of the schema is how contracts silently drift out of sync with their consumers.</div>
+
+  <h3 style="margin-top:22px;">Domain 4 — scenario items</h3>
+
+  <div class="qcard"><div class="qd">Item A4-1 · Module 4.1</div>
+  <div class="q">An extraction pipeline pulls contract terms into a required schema. Auditors find fabricated
+  values where the source document was silent. What's the root architectural cause?</div>
+  <div class="opt">A. The model is insufficiently capable</div>
+  <div class="opt">B. The schema requires every field with no representation for absent data, so producing valid output requires inventing values</div>
+  <div class="opt">C. Temperature is too high</div>
+  <div class="opt">D. The documents are too long</div>
+  <div class="ans"><b>B.</b> The schema itself made fabrication the only schema-valid behavior — the model
+  is doing exactly what it was constrained to do. The fix is a legitimate absent path: nullable fields, an
+  <code>"unknown"</code> enum, or an explicit gaps array. A treats a design error as a capability gap and
+  would produce more <em>convincing</em> fabrications. This is the most important idea in Domain 4.</div></div>
+
+  <div class="qcard"><div class="qd">Item A4-2 · Module 4.2</div>
+  <div class="q">A team enables schema-enforced output and reports "extraction is now reliable — every record
+  validates." What should an architect flag?</div>
+  <div class="opt">A. Nothing — validation is the goal</div>
+  <div class="opt">B. Schema validity proves shape, not truth; semantic accuracy needs separate validation and sampling against ground truth</div>
+  <div class="opt">C. They should also lower the temperature</div>
+  <div class="opt">D. They should switch to prompted JSON for flexibility</div>
+  <div class="ans"><b>B.</b> A 100% validation rate says only that parse failures are gone. A fabricated but
+  well-formed price validates perfectly, and the team has now lost the crash that used to surface bad
+  input. Schema enforcement converts loud failures into silent ones unless you add semantic checks —
+  which is precisely why the reported "reliability" is worth challenging.</div></div>
+
+  <div class="qcard"><div class="qd">Item A4-3 · Module 4.3</div>
+  <div class="q">A nightly job processes 50,000 records; a small fraction fail validation and are skipped so
+  the run completes. What's the architectural concern?</div>
+  <div class="opt">A. The job should stop entirely on the first failure</div>
+  <div class="opt">B. Silently dropping records erodes coverage invisibly — rejections must be counted, surfaced, and alarmed on when the rate moves</div>
+  <div class="opt">C. Validation should be removed to improve throughput</div>
+  <div class="opt">D. Records should be retried indefinitely</div>
+  <div class="ans"><b>B.</b> Skipping isn't inherently wrong — <em>silently</em> skipping is. Without a
+  visible rejection rate, an upstream format change can quietly halve your coverage while every dashboard
+  stays green. A is too brittle for bulk work; C removes the only thing catching bad data; D risks an
+  unbounded loop on deterministically invalid input.</div></div>
+
+  <div class="qcard"><div class="qd">Item A4-4 · Module 4.4</div>
+  <div class="q">A downstream team needs a new required field in an existing extraction contract. Safest
+  rollout?</div>
+  <div class="opt">A. Add it as required and redeploy</div>
+  <div class="opt">B. Add it optional, backfill history, confirm consumers handle it, then tighten to required</div>
+  <div class="opt">C. Add it required and have consumers ignore missing values</div>
+  <div class="opt">D. Create a second parallel pipeline</div>
+  <div class="ans"><b>B.</b> The standard non-breaking evolution path: expand, migrate, then contract.
+  A breaks every existing consumer and invalidates historical records at once. C is self-contradictory —
+  a field consumers must tolerate as missing isn't required. D doubles cost and creates two sources of
+  truth to reconcile.</div></div>
+
+  <div class="footer-note">Architect Workbook · Domain 4 — Structured Output &amp; Contracts</div>
+</div>
+
+<!-- ============================ DOMAIN 5 ============================ -->
+<div class="page">
+  <div class="section-head"><span class="dnum">D5</span><h2>Claude Code Configuration</h2><span class="w">~12% · 2 modules</span></div>
+  <p class="lead">Named explicitly in the credential's scope. At architect level the question is
+  <em>governance</em>: how a team configures Claude Code so behavior is consistent and constraints hold.</p>
+
+  <!-- 5.1 -->
+  <div class="modhead"><span class="mn">5.1</span><h3>Project Configuration &amp; the Instruction Hierarchy</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Decide what belongs at each configuration layer; know which layers
+  are advisory and which are enforced.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:22%">Layer</th><th style="width:14%">Nature</th><th>Put here</th></tr></thead>
+    <tbody>
+      <tr><td><b>Managed / org policy</b></td><td><b>Enforced</b></td><td>Organization-wide constraints individuals must not override.</td></tr>
+      <tr><td><b>Permission rules</b></td><td><b>Enforced</b></td><td>What may run unattended vs. what requires approval.</td></tr>
+      <tr><td><b>Hooks</b></td><td><b>Enforced</b></td><td>Deterministic actions on lifecycle events — blocking a command, running a formatter, logging for audit.</td></tr>
+      <tr><td><b>Project memory</b> (<span class="mono">CLAUDE.md</span>)</td><td>Advisory</td><td>Conventions, architecture notes, commands, domain vocabulary. Checked into the repo, shared by the team.</td></tr>
+      <tr><td><b>Skills</b></td><td>Advisory</td><td>Packaged procedures loaded on demand when relevant.</td></tr>
+      <tr><td><b>Slash commands</b></td><td>Advisory</td><td>Reusable prompts invoked by name.</td></tr>
+      <tr><td><b>Session prompts</b></td><td>Advisory</td><td>Task-specific direction.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox key"><div class="t">The distinction the exam is built on</div>
+  <b>Advisory layers are read and weighed by the model. Enforced layers are executed by the harness and
+  cannot be reasoned around.</b> Anything phrased as "must never" belongs in an enforced layer. Writing
+  "never run destructive commands" in <span class="mono">CLAUDE.md</span> is reasonable guidance and a
+  <em>guarantee of nothing</em> — if the requirement is absolute, it belongs in a hook or a permission
+  rule. Expect at least one item that offers a well-worded instruction against a harness control.</div>
+
+  <div class="cbox tip"><div class="t">What makes project memory good</div>
+  Write for the model, not for onboarding humans. High value: build and test commands, directory layout,
+  naming and style conventions, domain vocabulary, and <em>explicit non-goals</em> ("don't add new
+  dependencies", "tests are offline-only"). Low value: prose the model can infer from the code itself.
+  Keep it current — stale conventions produce confidently wrong output, and nothing signals staleness.</div>
+
+  <!-- 5.2 -->
+  <div class="modhead"><span class="mn">5.2</span><h3>Extension &amp; Team-Scale Governance</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Choose the right extension mechanism; make a team's configuration
+  consistent, reviewable, and safe.</div>
+
+  <table class="tight">
+    <thead><tr><th style="width:20%">Mechanism</th><th style="width:34%">Use when</th><th>Not for</th></tr></thead>
+    <tbody>
+      <tr><td><b>Project memory</b></td><td>Context every session needs.</td><td>Hard constraints; task specifics.</td></tr>
+      <tr><td><b>Skill</b></td><td>A recurring procedure worth packaging, loaded only when relevant.</td><td>Things needed on every single turn — that's memory.</td></tr>
+      <tr><td><b>Subagent</b></td><td>A scoped task deserving its own context — fan-out or fresh-eyes verification.</td><td>Work the main agent can do directly in one turn.</td></tr>
+      <tr><td><b>Hook</b></td><td>A constraint or side effect that must happen deterministically.</td><td>Guidance and preferences.</td></tr>
+      <tr><td><b>MCP server</b></td><td>Connecting an external system, reusable across clients.</td><td>Logic that belongs in your own code.</td></tr>
+      <tr><td><b>Slash command</b></td><td>A prompt people retype often.</td><td>Anything needing enforcement.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox key"><div class="t">Configuration is code — treat it that way</div>
+  Project memory, hooks, permission rules, and skills should be <b>version-controlled, code-reviewed, and
+  rolled out deliberately</b>. A hook is executable logic on every developer's machine; an over-broad
+  permission rule silently widens what runs unattended across the whole team. "It's just config" is how
+  ungoverned changes reach every engineer at once.</div>
+
+  <div class="cbox warn"><div class="t">Two governance failure modes</div>
+  <b>Configuration drift</b> — every engineer with their own local setup, so behavior varies per machine
+  and bugs aren't reproducible. Fix by putting shared config in the repo.<br>
+  <b>Permission sprawl</b> — allowlists that only ever grow, because each addition is individually
+  reasonable. Review them on a schedule and remove what's unused; an allowlist nobody prunes eventually
+  approximates "allow everything."</div>
+
+  <div class="scen"><div class="t">Design drill 5.2 — Configure a team</div>
+  For a 20-engineer team adopting Claude Code on a production service, specify: what goes in project
+  memory · which constraints become hooks or permission rules (and why each must be enforced rather than
+  advised) · which recurring procedures become skills · what stays individual preference · and your review
+  cadence for the permission list. <b>Then:</b> pick your single most important hook and describe what an
+  engineer would experience when it fires. If that experience is confusing, the hook needs a better message.</div>
+
+  <div class="footer-note">Architect Workbook · Domain 5 — Claude Code Configuration</div>
+</div>
+
+<div class="page">
+  <h3>Domain 5 — scenario items</h3>
+
+  <div class="qcard"><div class="qd">Item A5-1 · Module 5.1</div>
+  <div class="q">A regulated team requires that a specific data-export command <em>never</em> run without
+  approval, even if a model is prompt-injected or an engineer asks for it directly. Where does this belong?</div>
+  <div class="opt">A. A strongly worded rule in <span class="mono">CLAUDE.md</span></div>
+  <div class="opt">B. The system prompt for every session</div>
+  <div class="opt">C. A hook or permission rule enforced by the harness</div>
+  <div class="opt">D. A tool description warning about the risk</div>
+  <div class="ans"><b>C.</b> "Never, even under injection" is an absolute requirement, and only
+  harness-enforced controls provide one. A, B, and D are all text the model reads and weighs against
+  everything else in context — useful as guidance, worthless as a guarantee, and defeated by exactly the
+  scenario described. The advisory/enforced split is the core of Domain 5.</div></div>
+
+  <div class="qcard"><div class="qd">Item A5-2 · Module 5.2</div>
+  <div class="q">Engineers each maintain personal Claude Code configurations. Output quality varies widely
+  and bugs are hard to reproduce. Best remedy?</div>
+  <div class="opt">A. Have everyone independently improve their own setup</div>
+  <div class="opt">B. Move shared context and constraints into version-controlled project configuration, reviewed like code, leaving genuine preferences individual</div>
+  <div class="opt">C. Standardize on one model for everyone</div>
+  <div class="opt">D. Stop using Claude Code on this project</div>
+  <div class="ans"><b>B.</b> The problem is configuration drift, so the fix is shared, reviewable
+  configuration in the repo — which also makes behavior reproducible when something goes wrong. A
+  entrenches the divergence. C addresses one variable among many. D discards the tool over a solvable
+  governance problem. Note the deliberate carve-out: standardize what affects <em>output</em>, not
+  personal ergonomics.</div></div>
+
+  <div class="qcard"><div class="qd">Item A5-3 · Module 5.2</div>
+  <div class="q">A team wants Claude Code to follow a detailed 12-step release procedure, but only during
+  releases — it's irrelevant the rest of the time. Best mechanism?</div>
+  <div class="opt">A. Put all 12 steps in <span class="mono">CLAUDE.md</span></div>
+  <div class="opt">B. Package it as a skill, loaded on demand when a release task is underway</div>
+  <div class="opt">C. A hook that fires on every commit</div>
+  <div class="opt">D. Paste the procedure into the prompt each time</div>
+  <div class="ans"><b>B.</b> Skills exist for exactly this: task-specific procedures loaded when relevant
+  rather than occupying context permanently. A puts 12 irrelevant steps into every unrelated session,
+  spending context and diluting attention. C misuses an enforcement mechanism for guidance and fires at
+  the wrong time. D works but relies on humans remembering, and drifts as the procedure evolves.</div></div>
+
+  <div class="footer-note">Architect Workbook · Domain 5 — Claude Code Configuration</div>
+</div>
+<!-- ============================ DOMAIN 6 ============================ -->
+<div class="page">
+  <div class="section-head"><span class="dnum">D6</span><h2>Reliability, Cost &amp; Governance</h2><span class="w">~10% · 2 modules</span></div>
+  <p class="lead">The "production-grade" half of the credential's scope statement — what separates a design
+  that demos from one that can be operated, funded, and defended.</p>
+
+  <!-- 6.1 -->
+  <div class="modhead"><span class="mn">6.1</span><h3>Reliability, Degradation &amp; Observability</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Design behavior for adverse conditions; instrument a system so
+  failure is visible before users report it.</div>
+
+  <h4>Degradation ladder — decide these before launch, not during the incident</h4>
+  <table class="tight">
+    <thead><tr><th style="width:28%">Condition</th><th>Designed response</th></tr></thead>
+    <tbody>
+      <tr><td>Rate limited (429)</td><td>Backoff with jitter; queue if latency-tolerant; shed load with a clear message if not.</td></tr>
+      <tr><td>Service overloaded / 5xx</td><td>Retry with backoff, then fall back — a smaller tier, a cached answer, or a graceful "unavailable".</td></tr>
+      <tr><td>Latency budget exceeded</td><td>Return partial results or a queued-work acknowledgement. Never hang.</td></tr>
+      <tr><td>Validation failures spike</td><td>Alarm and route to review — do not silently drop (Module 4.3).</td></tr>
+      <tr><td>Agent hits its budget cap</td><td>Return best-effort with the limit disclosed, or escalate. Terminate cleanly either way.</td></tr>
+      <tr><td>Tool dependency down</td><td>Degrade to the subset of capability that still works, and say which part is unavailable.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox key"><div class="t">The design question behind all of these</div>
+  <b>What does the user get when this system is unhealthy?</b> An architecture with no answer will
+  improvise one — usually a hang, a stack trace, or a confidently empty result. Deciding the degraded
+  experience in advance is what makes a design production-grade rather than demo-grade.</div>
+
+  <h4>What to instrument</h4>
+  <table class="tight">
+    <thead><tr><th style="width:26%">Signal</th><th>Why it earns its place</th></tr></thead>
+    <tbody>
+      <tr><td>Tokens per request/run, split by cache read/write</td><td>The cost driver, and the earliest warning of context growth or a broken cache prefix.</td></tr>
+      <tr><td>Agent iterations per run</td><td>Rising iteration counts precede runaway loops and cost spikes.</td></tr>
+      <tr><td>Validation / rejection rate</td><td>The canary for upstream change (Module 4.3).</td></tr>
+      <tr><td>Tool error rate by tool</td><td>Isolates a failing dependency from a failing model.</td></tr>
+      <tr><td>Stop-reason distribution</td><td>A rise in <code>max_tokens</code> means truncation; refusals mean scope problems.</td></tr>
+      <tr><td>Human gate approve/reject rate</td><td>Near-100% approval at volume means the gate is theater (Module 1.4).</td></tr>
+      <tr><td>End-to-end latency, p50 and p95</td><td>Agent latency is long-tailed — the mean hides the pain.</td></tr>
+      <tr><td>Full request payloads (redacted)</td><td>Most "the model did something weird" incidents are "we sent something weird."</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox warn"><div class="t">Non-determinism changes what "tested" means</div>
+  The same input can produce different output, so a single passing run proves nothing and a single failure
+  may not reproduce. Production readiness requires an <b>eval set</b> with aggregate pass rates, and
+  regression testing against it on every prompt, schema, model, or tool change. A team that validated a
+  change on one example has not tested it.</div>
+
+  <!-- 6.2 -->
+  <div class="modhead"><span class="mn">6.2</span><h3>Cost Architecture &amp; Governance Posture</h3><span class="tag">~75 min</span></div>
+
+  <div class="obj"><b>Objectives —</b> Make cost a design property; establish the governance posture a
+  production deployment needs.</div>
+
+  <div class="cbox key"><div class="t">The levers, ranked — and they compose</div>
+  <b>1. Right-size the model per step</b> — the largest single lever, and in a multi-agent system it
+  applies per participant. <b>2. Batch anything latency-tolerant</b> — half price. <b>3. Cache the stable
+  prefix</b> — design for prefix stability (Module 3.3). <b>4. Control context growth</b> — you re-pay for
+  history on every call. <b>5. Tune effort</b> where depth isn't buying accuracy. <b>6. Cap the system</b>
+  — per-run and global ceilings so a bug can't produce an unbounded bill.</div>
+
+  <div class="cbox warn"><div class="t">The costs that surprise teams</div>
+  <b>Context re-sent every turn</b> — an agent's 40th call carries 39 turns of history, so a long run's
+  cost grows super-linearly with iterations. <b>Multi-agent context re-establishment</b> — each agent pays
+  for its own prompt and tools. <b>Retries and evaluator loops</b> — a 3-iteration evaluator triples spend
+  on affected records. <b>A broken cache prefix</b> — a one-character change can multiply input cost
+  overnight with no other symptom. Model all four before launch, not after the first invoice.</div>
+
+  <h4>Governance posture for a production deployment</h4>
+  <ol class="steps">
+    <li><b>Data classification</b> — what may enter a prompt, what must be redacted, which channel is approved for each class.</li>
+    <li><b>Credential architecture</b> — secrets outside model-readable context; the model sees results, never keys.</li>
+    <li><b>Least privilege</b> — each agent gets the narrowest tool surface that does its job; read-untrusted separated from act-externally.</li>
+    <li><b>Accountability</b> — a named human owns every consequential automated action. "The system decided" is not an answer to a regulator.</li>
+    <li><b>Auditability</b> — retain enough to reconstruct why a decision was made: inputs, tool calls, outputs, approvals.</li>
+    <li><b>Change control</b> — prompts, schemas, tools, and permissions are versioned and reviewed; an eval gate before rollout.</li>
+    <li><b>Escalation path</b> — a defined route to a human for anything regulated, contested, or irreversible.</li>
+  </ol>
+
+  <div class="scen"><div class="t">Design drill 6.2 — The readiness review</div>
+  Take your strongest design from any earlier drill and review it as if you were the approver:
+  <ul>
+    <li>What does a user experience when the API is rate-limited? When a tool dependency is down?</li>
+    <li>What is the per-run cost ceiling, and what enforces it?</li>
+    <li>Which three metrics would reveal a problem before a customer does?</li>
+    <li>If this made a costly mistake tomorrow, could you reconstruct why — and who is accountable?</li>
+    <li>What data enters the prompt, and is that channel approved for its classification?</li>
+  </ul>
+  Any question you can't answer is a gap. <b>This drill is the closest single exercise to what CCAR-F
+  actually assesses</b> — production-grade judgment, defended out loud, without notes.</div>
+
+  <h3 style="margin-top:20px;">Domain 6 — scenario items</h3>
+
+  <div class="qcard"><div class="qd">Item A6-1 · Module 6.1</div>
+  <div class="q">A customer-facing agent occasionally hangs for minutes when the API is overloaded; users
+  see a spinner. What should the architecture specify?</div>
+  <div class="opt">A. A longer client timeout so requests eventually complete</div>
+  <div class="opt">B. A latency budget with a defined degraded response — partial results, a queued acknowledgement, or a clear unavailable message</div>
+  <div class="opt">C. Retry indefinitely until it succeeds</div>
+  <div class="opt">D. Switch permanently to the fastest model</div>
+  <div class="ans"><b>B.</b> The defect is that no degraded behavior was ever designed, so the system
+  improvises a hang. A and C extend the hang rather than replacing it — and C can amplify an overload
+  incident. D trades quality on every request to mitigate an occasional condition, when what's needed is
+  a defined answer to "what does the user get when we're unhealthy?"</div></div>
+
+  <div class="qcard"><div class="qd">Item A6-2 · Module 6.2</div>
+  <div class="q">An agentic feature's monthly cost is 6× the forecast. Iteration counts and output length
+  look normal. Where should an architect look first?</div>
+  <div class="opt">A. Output token pricing</div>
+  <div class="opt">B. Input-side growth — cache read/write ratios and per-turn context size, since history is re-sent on every call</div>
+  <div class="opt">C. The number of users</div>
+  <div class="opt">D. Streaming overhead</div>
+  <div class="ans"><b>B.</b> With iterations and output normal, the overrun is on the input side: either
+  the cache stopped hitting (a changed prefix) or context per turn is larger than modelled — and because
+  history is re-sent every call, both compound with run length. A is ruled out by the stated evidence;
+  C would have shown up in volume metrics; D has no cost impact at all.</div></div>
+
+  <div class="qcard"><div class="qd">Item A6-3 · Module 6.2</div>
+  <div class="q">A team is ready to ship an agent that takes consequential customer-facing actions. Which
+  gap should block launch?</div>
+  <div class="opt">A. No support for streaming responses</div>
+  <div class="opt">B. No way to reconstruct why a given decision was made, and no named human accountable for automated actions</div>
+  <div class="opt">C. Not using the most capable model</div>
+  <div class="opt">D. No multi-agent architecture</div>
+  <div class="ans"><b>B.</b> Auditability and accountability are prerequisites for consequential automated
+  action — without them you cannot investigate an incident, answer a regulator, or assign ownership when
+  something goes wrong. A is a UX preference; C and D are design choices that may well be correct as-is.
+  Only B is the kind of gap that should stop a launch.</div></div>
+
+  <div class="footer-note">Architect Workbook · Domain 6 — Reliability, Cost &amp; Governance</div>
+</div>
+
+<!-- ============================ BACK MATTER ============================ -->
+<div class="page">
+  <h2 class="plain">6-week study plan</h2>
+  <p class="lead">Assumes CCDV-F-level API fluency. The emphasis is rehearsal, not reading — for a
+  closed-book scenario exam, the drills are the preparation.</p>
+
+  <table class="tight">
+    <thead><tr><th style="width:10%">Week</th><th style="width:30%">Modules</th><th>Focus</th></tr></thead>
+    <tbody>
+      <tr><td><b>1</b></td><td>Decision frame · 1.1 – 1.2</td><td>The autonomy ladder and decomposition. Write ADRs for five real workloads.</td></tr>
+      <tr><td><b>2</b></td><td>1.3 – 1.5</td><td>Tool surfaces, gates, failure modes. Do the pre-mortem drill on a system you actually run.</td></tr>
+      <tr><td><b>3</b></td><td>2.1 – 2.5</td><td>Multi-agent. For every topology, practise arguing the single-agent counter-case.</td></tr>
+      <tr><td><b>4</b></td><td>3.1 – 3.4</td><td>Context architecture. Drill the four levers until the distinctions are automatic.</td></tr>
+      <tr><td><b>5</b></td><td>4.1 – 4.4 · 5.1 – 5.2</td><td>Contracts and Claude Code governance. Specify one contract end to end.</td></tr>
+      <tr><td><b>6</b></td><td>6.1 – 6.2 · full review</td><td>Reliability and cost. Run the readiness review on three designs, then re-do every scenario item.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox tip"><div class="t">How to prepare for a closed-book scenario exam</div>
+  Reading is the least effective preparation. Do this instead: take any system you know, and <b>say aloud</b>
+  which rung it sits on, what its binding constraint is, where its gates are, how its context is managed,
+  and what happens when each part fails. Fluency under those five questions — without notes — is what the
+  exam measures. If you can only answer them by looking something up, you're not ready.</div>
+
+  <h2 class="plain" style="margin-top:24px;">Module tracker</h2>
+  <p class="lead">Tick a module only when you can answer its question aloud, unprompted, in under a minute.</p>
+
+  <table class="tight">
+    <thead><tr><th style="width:6%">✓</th><th style="width:7%">Mod</th><th style="width:30%">Title</th><th>Self-assessment question</th></tr></thead>
+    <tbody>
+      <tr><td>☐</td><td>1.1</td><td>Autonomy Level</td><td>Name the four criteria. Which scenario words signal "workflow, not agent"?</td></tr>
+      <tr><td>☐</td><td>1.2</td><td>Decomposition</td><td>What belongs to the model and what belongs to code — and why?</td></tr>
+      <tr><td>☐</td><td>1.3</td><td>Tool Surface</td><td>State the promotion rule. What does one broad tool cost you?</td></tr>
+      <tr><td>☐</td><td>1.4</td><td>Human-in-the-Loop</td><td>Five requirements for a real gate. Why isn't model confidence one?</td></tr>
+      <tr><td>☐</td><td>1.5</td><td>Failure Modes</td><td>Name six modes and one structural mitigation each.</td></tr>
+      <tr><td>☐</td><td>2.1</td><td>When Multi-Agent Wins</td><td>State the three legitimate reasons. Why isn't "specialization" one?</td></tr>
+      <tr><td>☐</td><td>2.2</td><td>Topologies</td><td>Name six topologies and each one's characteristic failure.</td></tr>
+      <tr><td>☐</td><td>2.3</td><td>Handoff Contracts</td><td>What must a handoff carry besides the conclusion?</td></tr>
+      <tr><td>☐</td><td>2.4</td><td>Partial Failure</td><td>One of five parallel workers fails — what does the merge produce?</td></tr>
+      <tr><td>☐</td><td>2.5</td><td>Multi-Agent Economics</td><td>Which topology has the worst latency profile? The worst cost profile?</td></tr>
+      <tr><td>☐</td><td>3.1</td><td>Context Budget</td><td>What usually dominates context in an agent loop?</td></tr>
+      <tr><td>☐</td><td>3.2</td><td>The Four Levers</td><td>Editing vs. compaction vs. memory vs. retrieval — state each distinction.</td></tr>
+      <tr><td>☐</td><td>3.3</td><td>Caching as Constraint</td><td>Name three design choices that silently destroy prefix stability.</td></tr>
+      <tr><td>☐</td><td>3.4</td><td>Long-Horizon Sessions</td><td>What's the difference between long-running and resumable?</td></tr>
+      <tr><td>☐</td><td>4.1</td><td>Output Contracts</td><td>Why does a fully-required schema cause fabrication?</td></tr>
+      <tr><td>☐</td><td>4.2</td><td>Enforcement</td><td>What does schema validity <em>not</em> guarantee?</td></tr>
+      <tr><td>☐</td><td>4.3</td><td>Degradation</td><td>Which failure strategy is always wrong, and why?</td></tr>
+      <tr><td>☐</td><td>4.4</td><td>Contract Evolution</td><td>How do you add a required field without breaking consumers?</td></tr>
+      <tr><td>☐</td><td>5.1</td><td>Configuration Layers</td><td>Which layers are enforced and which advisory? Where does "must never" go?</td></tr>
+      <tr><td>☐</td><td>5.2</td><td>Team Governance</td><td>Name the two governance failure modes and their fixes.</td></tr>
+      <tr><td>☐</td><td>6.1</td><td>Reliability</td><td>What does a user get when the system is unhealthy? Name five metrics.</td></tr>
+      <tr><td>☐</td><td>6.2</td><td>Cost &amp; Governance</td><td>Rank the cost levers. Name the four costs that surprise teams.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cbox exam"><div class="t">Answer key — quick reference</div>
+  <b>D1:</b> 1-B · 2-B · 3-C · 4-C &nbsp;·&nbsp; <b>D2:</b> 1-B · 2-B · 3-B · 4-B · 5-B &nbsp;·&nbsp;
+  <b>D3:</b> 1-B · 2-C · 3-B · 4-B &nbsp;·&nbsp; <b>D4:</b> 1-B · 2-B · 3-B · 4-B &nbsp;·&nbsp;
+  <b>D5:</b> 1-C · 2-B · 3-B &nbsp;·&nbsp; <b>D6:</b> 1-B · 2-B · 3-B<br>
+  <span class="mini">The answer letters cluster because correct architectural answers share a shape:
+  name the constraint, choose the structural control, keep the human accountable for the irreversible step.
+  <b>Don't pattern-match the letter — rehearse the reasoning.</b> On the real exam the options are shuffled,
+  and the rationale is the only thing that transfers.</span></div>
+
+  <div class="footer-note">Architect Workbook · Claude Certified Architect — Foundations · Unofficial study aid · Domain weights inferred, not published · Not affiliated with or endorsed by Anthropic</div>
+</div>
